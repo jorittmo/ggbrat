@@ -1,0 +1,25 @@
+Package: ggbrat
+Type: Package
+Title: Build 2D Brain Atlases from Surface Meshes
+Version: 0.1.0
+Authors@R:
+    person("Jonathan", "Rittmo", email = "jorittmo@proton.me", role = c("aut", "cre"))
+Description: Tools for deriving 2D atlas geometries from different types of brain surfaces,
+    meshes and annotations. The package combines Python-based visibility
+    extraction with R-based sf workflows so atlas files can be prepared for
+    ggplot-style plotting.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports:
+    alphahull,
+    dplyr,
+    FNN,
+    reticulate,
+    sf,
+    stats
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.0.0

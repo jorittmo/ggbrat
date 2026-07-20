@@ -1,0 +1,23 @@
+test_that("nifti_to_surface validates density controls before loading Python", {
+  expect_error(
+    nifti_to_surface("atlas.nii.gz", reduction = 0.5, subdivision = 1),
+    "either `reduction` or `subdivision`"
+  )
+  expect_error(nifti_to_surface("atlas.nii.gz", reduction = 1), "in \\[0, 1\\)")
+  expect_error(nifti_to_surface("atlas.nii.gz", subdivision = 4), "between 0 and 3")
+  expect_error(
+    nifti_to_surface("atlas.nii.gz", voxel_smoothing_sigma = -1),
+    "non-negative"
+  )
+  expect_error(
+    nifti_to_surface("atlas.nii.gz", smoothing_iterations = -1),
+    "non-negative integer"
+  )
+  expect_error(nifti_to_surface("atlas.nii.gz", smoothing_factor = 0), "in \\(0, 1\\]")
+  expect_error(nifti_to_surface("atlas.nii.gz", minimum_vertices = 3), "at least 4")
+  expect_error(nifti_to_surface("atlas.nii.gz", minimum_volume = -1), "non-negative")
+  expect_error(
+    nifti_to_surface("atlas.nii.gz", split_hemispheres = NA),
+    "TRUE or FALSE"
+  )
+})
