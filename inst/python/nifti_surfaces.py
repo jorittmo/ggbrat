@@ -29,6 +29,14 @@ def _atlas_name(path):
     return os.path.splitext(name)[0]
 
 
+def _ggbrat_surface_cache():
+    root = os.environ.get("GGBRAT_CACHE_DIR")
+    if not root:
+        root = os.environ.get("XDG_CACHE_HOME", os.path.join(os.path.expanduser("~"), ".cache"))
+        root = os.path.join(root, "R", "ggbrat")
+    return os.path.join(root, "generated", "surfaces")
+
+
 def _read_lookup(path):
     if path is None:
         return {}
@@ -522,9 +530,7 @@ def nifti_to_surface(
         raise ValueError("voxel_smoothing_sigma must be non-negative")
 
     if output_file is None:
-        output_file = os.path.join(
-            "data", "subcortical", "surfaces", f"{_atlas_name(nifti_path)}.vtp"
-        )
+        output_file = os.path.join(_ggbrat_surface_cache(), f"{_atlas_name(nifti_path)}.vtp")
     output_file = os.path.abspath(os.fspath(output_file))
     if not output_file.lower().endswith(".vtp"):
         raise ValueError("output_file must have a .vtp extension")

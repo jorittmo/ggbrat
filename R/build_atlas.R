@@ -27,11 +27,9 @@
 #'
 #' @examples
 #' \dontrun{
+#' melbourne_mesh <- download_surface("Melbourne_S1", type = "subcortical")
 #' subcortical_atlas <- build_brain_atlas(
-#'   mesh_path = c(
-#'     left = "data/subcortical/surfaces/Melbourne_S1_left.vtp",
-#'     right = "data/subcortical/surfaces/Melbourne_S1_right.vtp"
-#'   ),
+#'   mesh_path = melbourne_mesh,
 #'   add_cortex = TRUE,
 #'   n_cols = 2
 #' )
@@ -44,7 +42,7 @@ build_brain_atlas <- function(
   view_names = NULL,
   camera_positions = NULL,
   interactive = FALSE,
-  surf_dir = "data/fsaverage/surf",
+  surf_dir = NULL,
   surface = "pial",
   surface_path = NULL,
   surf_blend_ratio = NULL,
@@ -263,14 +261,15 @@ build_brain_atlas <- function(
 #'
 #' @examples
 #' \dontrun{
+#' # Select an SVG whose labelled groups contain the atlas regions.
 #' atlas <- build_atlas_svg(
-#'   "data/subcortical/drawings/Melbourne_S2_example.svg",
+#'   svg_path = file.choose(),
 #'   geometry_method = "path"
 #' )
 #'
 #' # Only for legacy drawings whose paths are converted stroke outlines:
 #' legacy_atlas <- build_atlas_svg(
-#'   "data/subcortical/drawings/MTLfig_t2.svg",
+#'   svg_path = file.choose(),
 #'   geometry_method = "concaveman",
 #'   concavity = 0,
 #'   length_threshold = 2.5

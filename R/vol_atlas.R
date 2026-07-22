@@ -13,8 +13,8 @@
 #' @param lookup_path Optional CSV whose first two columns contain numeric labels
 #'   and region names. Headerless files are supported.
 #' @param gray_matter_path Path to the gray-matter probability or anatomical
-#'   context NIfTI. When `NULL`, the function searches `data/nifti`, preferring
-#'   a filename containing `GM` or `probseg`.
+#'   context NIfTI. When `NULL`, the MNI152NLin2009cAsym gray-matter
+#'   probability map is downloaded to and resolved from the ggbrat cache.
 #' @param gray_matter_threshold Values greater than or equal to this threshold
 #'   are included in the context mask.
 #' @param views Any ordered subset of `"axial"`, `"sagittal"`, and
@@ -54,15 +54,10 @@
 #'
 #' @examples
 #' \dontrun{
+#' melbourne <- download_volume_atlas("Melbourne_S1")
 #' atlas <- build_atlas_vol(
-#'   atlas_path = paste0(
-#'     "data/subcortical/MNI152NLin2009cAsym/Melbourne_S1/",
-#'     "Melbourne_S1.nii.gz"
-#'   ),
-#'   lookup_path = paste0(
-#'     "data/subcortical/MNI152NLin2009cAsym/Melbourne_S1/",
-#'     "Melbourne_S1_lookup.csv"
-#'   )
+#'   atlas_path = melbourne$nifti,
+#'   lookup_path = melbourne$lookup
 #' )
 #'
 #' ggplot2::ggplot(atlas) +
@@ -292,24 +287,14 @@ vol_validate_file <- function(path, name) {
 
 vol_resolve_context_path <- function(path) {
   if (!is.null(path)) return(path)
-  directories <- unique(c(
-    file.path("data", "nifti"),
-    system.file("data", "nifti", package = "ggbrat")
-  ))
-  directories <- directories[nzchar(directories) & dir.exists(directories)]
-  candidates <- unique(normalizePath(unlist(lapply(directories, function(directory) {
-    Sys.glob(file.path(directory, "*.nii*"))
-  }), use.names = FALSE), mustWork = FALSE))
-  preferred <- candidates[grepl("GM|probseg", basename(candidates), ignore.case = TRUE)]
-  selected <- if (length(preferred) == 1L) preferred else candidates
-  if (length(selected) != 1L) {
-    stop(
-      "Could not identify one context NIfTI in `data/nifti`; ",
-      "supply `gray_matter_path` explicitly.",
-      call. = FALSE
-    )
+  resource <- download_volume_atlas(
+    "tpl-MNI152NLin2009cAsym_res-01_label-GM_probseg",
+    quiet = TRUE
+  )
+  if (length(resource$nifti) != 1L) {
+    stop("The default gray-matter resource did not resolve to one NIfTI file.", call. = FALSE)
   }
-  selected[[1]]
+  resource$nifti[[1L]]
 }
 
 vol_as_3d_array <- function(image, name) {

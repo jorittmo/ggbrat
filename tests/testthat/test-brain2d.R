@@ -101,6 +101,8 @@ test_that("atlas polygon and cortex preview controls are validated", {
   expect_equal(formals(build_brain_atlas)$keep_z_coord, FALSE)
   expect_equal(formals(brain_views)$keep_z_coord, FALSE)
   expect_equal(formals(brain_views)$cortex_preview_opacity, 0.1)
+  expect_null(formals(brain_views)$surf_dir)
+  expect_null(formals(build_brain_atlas)$surf_dir)
 })
 
 test_that("cortical density filtering retains dense projected points", {

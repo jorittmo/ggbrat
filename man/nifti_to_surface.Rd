@@ -42,7 +42,7 @@ region images.}
 and region names. Headerless files are supported.}
 
 \item{output_file}{Destination \code{.vtp} file. By default it is named after the
-NIfTI image under \code{data/subcortical/surfaces}.}
+NIfTI image under the ggbrat user cache's \code{generated/surfaces} directory.}
 
 \item{labels}{Optional numeric labels to include. The default uses every
 nonzero label in the image.}
@@ -122,13 +122,10 @@ and character \code{region} arrays are stored as both point and cell data.
 }
 \examples{
 \dontrun{
+brainstem_files <- download_volume_atlas("Brainstem_Navigator")
 brainstem <- nifti_to_surface(
-  nifti_path = "data/subcortical/MNI152NLin2009cAsym/Brainstem_Navigator",
-  lookup_path = paste0(
-    "data/subcortical/MNI152NLin2009cAsym/Brainstem_Navigator/",
-    "Brainstem_Navigator_lookup.csv"
-  ),
-  output_file = "data/subcortical/surfaces/Brainstem_Navigator.vtp"
+  nifti_path = brainstem_files$nifti,
+  lookup_path = brainstem_files$lookup
 )
 }
 }

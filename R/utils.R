@@ -8,8 +8,7 @@ shrink_polygons <- function(x, dist) {
 
 
 smooth_polygons <- function(x, method = "ksmooth", smoothness = 3) {
-  require(smoothr)
-  smooth(x, method = method, smoothness = smoothness)
+  smoothr::smooth(x, method = method, smoothness = smoothness)
 }
 
 

@@ -112,7 +112,9 @@ brain2d_normalize_camera_positions <- function(camera_positions) {
 #' @param view_names Optional names for the views.
 #' @param camera_positions Optional list of saved PyVista camera positions.
 #' @param interactive Whether to capture camera positions interactively.
-#' @param surf_dir Directory containing FreeSurfer surface files.
+#' @param surf_dir Directory containing FreeSurfer surface files. When `NULL`,
+#'   the requested fsaverage surfaces are downloaded to and resolved from the
+#'   user-specific ggbrat cache.
 #' @param surface A single surface name or a pair of surfaces to blend.
 #' @param surface_path Optional named `left`/`right` paths to FreeSurfer or
 #'   `.surf.gii` files. Supply a named list in which each hemisphere contains
@@ -141,7 +143,7 @@ brain_views <- function(
   view_names = NULL,
   camera_positions = NULL,
   interactive = FALSE,
-  surf_dir = "data/fsaverage/surf",
+  surf_dir = NULL,
   surface = "pial",
   surface_path = NULL,
   surf_blend_ratio = NULL,
@@ -510,7 +512,7 @@ capture_brain_view_presets <- function(
   preset_hemi = c("left", "right"),
   n_views = 1,
   view_names = NULL,
-  surf_dir = "data/fsaverage/surf",
+  surf_dir = NULL,
   surface = "pial",
   surface_path = NULL,
   surf_blend_ratio = NULL,
@@ -851,6 +853,20 @@ brain2d_load_python <- function() {
 }
 
 brain2d_surface_paths <- function(surf_dir, surface, surf_blend_ratio) {
+  if (is.null(surf_dir)) {
+    if (!length(surface) %in% c(1L, 2L)) {
+      stop("`surface` must contain one surface name or a pair to blend.", call. = FALSE)
+    }
+    downloaded <- lapply(surface, function(name) {
+      download_surface(paste0("fsaverage_", name), type = "cortical")
+    })
+    if (length(downloaded) == 1L) return(as.list(downloaded[[1L]]))
+    paths <- list(
+      left = vapply(downloaded, `[[`, character(1), "left"),
+      right = vapply(downloaded, `[[`, character(1), "right")
+    )
+    return(brain2d_resolve_explicit_surfaces(paths, surf_blend_ratio))
+  }
   if (length(surface) == 2L) {
     if (is.null(surf_blend_ratio)) {
       surf_blend_ratio <- 0.5

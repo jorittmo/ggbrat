@@ -11,7 +11,7 @@ brain_views(
   view_names = NULL,
   camera_positions = NULL,
   interactive = FALSE,
-  surf_dir = "data/fsaverage/surf",
+  surf_dir = NULL,
   surface = "pial",
   surface_path = NULL,
   surf_blend_ratio = NULL,
@@ -55,7 +55,9 @@ this defaults to \code{length(camera_positions)}.}
 
 \item{interactive}{Whether to capture camera positions interactively.}
 
-\item{surf_dir}{Directory containing FreeSurfer surface files.}
+\item{surf_dir}{Directory containing FreeSurfer surface files. When \code{NULL},
+the requested fsaverage surfaces are downloaded to and resolved from the
+user-specific ggbrat cache.}
 
 \item{surface}{A single surface name or a pair of surfaces to blend.}
 

@@ -10,7 +10,7 @@
 #' @param lookup_path Optional CSV whose first two columns contain numeric labels
 #'   and region names. Headerless files are supported.
 #' @param output_file Destination `.vtp` file. By default it is named after the
-#'   NIfTI image under `data/subcortical/surfaces`.
+#'   NIfTI image under the ggbrat user cache's `generated/surfaces` directory.
 #' @param labels Optional numeric labels to include. The default uses every
 #'   nonzero label in the image.
 #' @param split_hemispheres Whether to create separate `_left.vtp` and
@@ -61,13 +61,10 @@
 #'
 #' @examples
 #' \dontrun{
+#' brainstem_files <- download_volume_atlas("Brainstem_Navigator")
 #' brainstem <- nifti_to_surface(
-#'   nifti_path = "data/subcortical/MNI152NLin2009cAsym/Brainstem_Navigator",
-#'   lookup_path = paste0(
-#'     "data/subcortical/MNI152NLin2009cAsym/Brainstem_Navigator/",
-#'     "Brainstem_Navigator_lookup.csv"
-#'   ),
-#'   output_file = "data/subcortical/surfaces/Brainstem_Navigator.vtp"
+#'   nifti_path = brainstem_files$nifti,
+#'   lookup_path = brainstem_files$lookup
 #' )
 #' }
 #' @export
@@ -206,7 +203,7 @@ nifti_to_surface <- function(
     }
     if (is.null(output_file)) {
       output_file <- file.path(
-        "data", "subcortical", "surfaces", paste0(basename(source_dir), ".vtp")
+        ggbrat_generated_dir("surfaces"), paste0(basename(source_dir), ".vtp")
       )
     }
     result <- nifti_surface_python_env$nifti_files_to_surface(
@@ -239,6 +236,12 @@ nifti_to_surface <- function(
     return(reticulate::py_to_r(result))
   }
 
+  if (is.null(output_file)) {
+    atlas_name <- basename(nifti_path)
+    atlas_name <- sub("\\.nii(\\.gz)?$", "", atlas_name, ignore.case = TRUE)
+    output_file <- file.path(ggbrat_generated_dir("surfaces"), paste0(atlas_name, ".vtp"))
+  }
+
   args <- list(
     nifti_path = normalizePath(nifti_path, mustWork = FALSE),
     lookup_path = if (is.null(lookup_path)) NULL else normalizePath(lookup_path, mustWork = FALSE),
@@ -263,11 +266,6 @@ nifti_to_surface <- function(
     stop("`lookup_path` is required when `split_hemispheres = TRUE`.", call. = FALSE)
   }
 
-  if (is.null(output_file)) {
-    atlas_name <- basename(nifti_path)
-    atlas_name <- sub("\\.nii(\\.gz)?$", "", atlas_name, ignore.case = TRUE)
-    output_file <- file.path("data", "subcortical", "surfaces", paste0(atlas_name, ".vtp"))
-  }
   stem <- sub("\\.vtp$", "", output_file, ignore.case = TRUE)
   output_files <- c(left = paste0(stem, "_left.vtp"), right = paste0(stem, "_right.vtp"))
   results <- lapply(names(output_files), function(hemisphere) {

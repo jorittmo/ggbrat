@@ -20,6 +20,7 @@ Imports:
     reticulate,
     RNifti,
     sf,
+    smoothr,
     stats,
     xml2
 Suggests:

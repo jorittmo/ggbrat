@@ -129,6 +129,12 @@ ggbrat_cache_dir <- function(create = TRUE) {
   normalizePath(path, mustWork = FALSE)
 }
 
+ggbrat_generated_dir <- function(type, create = TRUE) {
+  path <- file.path(ggbrat_cache_dir(create = create), "generated", type)
+  if (create && !dir.exists(path)) dir.create(path, recursive = TRUE, showWarnings = FALSE)
+  normalizePath(path, mustWork = FALSE)
+}
+
 resource_select <- function(name, type, catalog) {
   if (!is.character(name) || !length(name) || anyNA(name) || any(!nzchar(name))) {
     stop("`name` must contain one or more resource names, or `\"all\"`.", call. = FALSE)

@@ -8,4 +8,7 @@ segments.csv
 temp.png
 visible_*.obj
 .positai
-data-raw/ggbrat-resources-prerelease/
+data-raw/
+local-data/
+ggbrat.Rcheck/
+ggbrat_0.1.0.tar.gz

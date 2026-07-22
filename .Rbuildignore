@@ -15,4 +15,6 @@
 ^mtl_atlas\.rds$
 ^schaefer_annots$
 ^schaefer_annots\.zip$
-^data-raw/ggbrat-resources-prerelease$
+^data-raw$
+^local-data$
+

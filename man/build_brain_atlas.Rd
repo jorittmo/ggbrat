@@ -11,7 +11,7 @@ build_brain_atlas(
   view_names = NULL,
   camera_positions = NULL,
   interactive = FALSE,
-  surf_dir = "data/fsaverage/surf",
+  surf_dir = NULL,
   surface = "pial",
   surface_path = NULL,
   surf_blend_ratio = NULL,
@@ -62,7 +62,9 @@ this defaults to \code{length(camera_positions)}.}
 
 \item{interactive}{Whether to capture camera positions interactively.}
 
-\item{surf_dir}{Directory containing FreeSurfer surface files.}
+\item{surf_dir}{Directory containing FreeSurfer surface files. When \code{NULL},
+the requested fsaverage surfaces are downloaded to and resolved from the
+user-specific ggbrat cache.}
 
 \item{surface}{A single surface name or a pair of surfaces to blend.}
 
@@ -172,11 +174,9 @@ creation.
 }
 \examples{
 \dontrun{
+melbourne_mesh <- download_surface("Melbourne_S1", type = "subcortical")
 subcortical_atlas <- build_brain_atlas(
-  mesh_path = c(
-    left = "data/subcortical/surfaces/Melbourne_S1_left.vtp",
-    right = "data/subcortical/surfaces/Melbourne_S1_right.vtp"
-  ),
+  mesh_path = melbourne_mesh,
   add_cortex = TRUE,
   n_cols = 2
 )

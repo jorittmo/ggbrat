@@ -9,7 +9,7 @@ capture_brain_view_presets(
   preset_hemi = c("left", "right"),
   n_views = 1,
   view_names = NULL,
-  surf_dir = "data/fsaverage/surf",
+  surf_dir = NULL,
   surface = "pial",
   surface_path = NULL,
   surf_blend_ratio = NULL,
@@ -34,7 +34,9 @@ this defaults to \code{length(camera_positions)}.}
 
 \item{view_names}{Optional names for the views.}
 
-\item{surf_dir}{Directory containing FreeSurfer surface files.}
+\item{surf_dir}{Directory containing FreeSurfer surface files. When \code{NULL},
+the requested fsaverage surfaces are downloaded to and resolved from the
+user-specific ggbrat cache.}
 
 \item{surface}{A single surface name or a pair of surfaces to blend.}
 

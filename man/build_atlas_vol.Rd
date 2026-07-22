@@ -28,8 +28,8 @@ build_atlas_vol(
 and region names. Headerless files are supported.}
 
 \item{gray_matter_path}{Path to the gray-matter probability or anatomical
-context NIfTI. When \code{NULL}, the function searches \code{data/nifti}, preferring
-a filename containing \code{GM} or \code{probseg}.}
+context NIfTI. When \code{NULL}, the MNI152NLin2009cAsym gray-matter
+probability map is downloaded to and resolved from the ggbrat cache.}
 
 \item{gray_matter_threshold}{Values greater than or equal to this threshold
 are included in the context mask.}
@@ -92,15 +92,10 @@ same dimensions and voxel-to-world affine transformation.
 }
 \examples{
 \dontrun{
+melbourne <- download_volume_atlas("Melbourne_S1")
 atlas <- build_atlas_vol(
-  atlas_path = paste0(
-    "data/subcortical/MNI152NLin2009cAsym/Melbourne_S1/",
-    "Melbourne_S1.nii.gz"
-  ),
-  lookup_path = paste0(
-    "data/subcortical/MNI152NLin2009cAsym/Melbourne_S1/",
-    "Melbourne_S1_lookup.csv"
-  )
+  atlas_path = melbourne$nifti,
+  lookup_path = melbourne$lookup
 )
 
 ggplot2::ggplot(atlas) +

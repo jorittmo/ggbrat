@@ -111,3 +111,13 @@ test_that("resource downloads reject stale checksums", {
     expect_error(download_atlas("one", quiet = TRUE), "Checksum mismatch")
   })
 })
+
+test_that("generated outputs use the user-specific cache", {
+  cache <- tempfile("ggbrat-generated-cache-")
+  old_options <- options(ggbrat.cache_dir = cache)
+  on.exit(options(old_options), add = TRUE)
+
+  generated <- ggbrat_generated_dir("surfaces")
+  expect_true(startsWith(generated, normalizePath(cache, mustWork = FALSE)))
+  expect_true(dir.exists(generated))
+})

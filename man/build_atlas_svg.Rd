@@ -87,14 +87,15 @@ them to the conventional Cartesian orientation used by \code{sf} and ggplot2.
 
 \examples{
 \dontrun{
+# Select an SVG whose labelled groups contain the atlas regions.
 atlas <- build_atlas_svg(
-  "data/subcortical/drawings/Melbourne_S2_example.svg",
+  svg_path = file.choose(),
   geometry_method = "path"
 )
 
 # Only for legacy drawings whose paths are converted stroke outlines:
 legacy_atlas <- build_atlas_svg(
-  "data/subcortical/drawings/MTLfig_t2.svg",
+  svg_path = file.choose(),
   geometry_method = "concaveman",
   concavity = 0,
   length_threshold = 2.5
