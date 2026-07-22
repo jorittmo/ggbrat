@@ -20,4 +20,19 @@ test_that("nifti_to_surface validates density controls before loading Python", {
     nifti_to_surface("atlas.nii.gz", split_hemispheres = NA),
     "TRUE or FALSE"
   )
+  expect_error(nifti_to_surface(character()), "one or more")
+  expect_error(nifti_to_surface("atlas.nii.gz", mask_threshold = Inf), "finite")
+  expect_error(
+    nifti_to_surface("atlas.nii.gz", distance_upsampling = 5),
+    "distance_upsampling"
+  )
+  expect_error(
+    nifti_to_surface("atlas.nii.gz", minimum_component_voxels = 0),
+    "minimum_component_voxels"
+  )
+  expect_error(nifti_to_surface("atlas.nii.gz", closing_radius = 0), "positive")
+  expect_error(
+    nifti_to_surface("atlas.nii.gz", closing_radius = 2, max_closing_radius = 1),
+    "at least"
+  )
 })
