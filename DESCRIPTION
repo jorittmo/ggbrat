@@ -8,7 +8,7 @@ Description: Tools for deriving 2D atlas geometries from different types of brai
     meshes and annotations. The package combines Python-based visibility
     extraction with R-based sf workflows so atlas files can be prepared for
     ggplot-style plotting.
-License: MIT
+License: MIT + file LICENSE
 SystemRequirements: Python (>= 3.9; optional, for surface atlas construction)
 Encoding: UTF-8
 LazyData: true
