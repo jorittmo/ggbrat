@@ -19,7 +19,7 @@ Imports:
     dplyr,
     FNN,
     isoband,
-    reticulate,
+    reticulate (>= 1.41.0),
     RNifti,
     sf,
     smoothr,
@@ -34,4 +34,3 @@ Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 Config/roxygen2/version: 8.0.0
  
-
