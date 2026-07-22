@@ -105,6 +105,31 @@ test_that("atlas polygon and cortex preview controls are validated", {
   expect_null(formals(build_brain_atlas)$surf_dir)
 })
 
+test_that("alpha hull failures preserve one geometry per atlas row", {
+  too_few <- sf::st_sfc(sf::st_multipoint(matrix(
+    c(0, 0, 1, 1), ncol = 2, byrow = TRUE
+  )))
+  empty <- ashape_polygon_sf(too_few)
+  expect_length(empty, 1L)
+  expect_true(sf::st_is_empty(empty))
+
+  square <- sf::st_sfc(sf::st_multipoint(matrix(
+    c(0, 0, 1, 0, 1, 1, 0, 1), ncol = 2, byrow = TRUE
+  )))
+  fallback <- ashape_polygon_sf(square, alpha = 1e-10)
+  expect_length(fallback, 1L)
+  expect_false(sf::st_is_empty(fallback))
+  expect_true(as.character(sf::st_geometry_type(fallback)) %in%
+    c("POLYGON", "MULTIPOLYGON"))
+
+  atlas <- sf::st_sf(
+    region = c("empty", "square"),
+    geometry = sf::st_sfc(too_few[[1]], square[[1]])
+  )
+  atlas$geometry <- c(empty, fallback)
+  expect_equal(nrow(atlas), 2L)
+})
+
 test_that("cortical density filtering retains dense projected points", {
   dense <- data.frame(
     x = c(seq(0, 0.09, length.out = 10), 10, 20),

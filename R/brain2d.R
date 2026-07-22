@@ -721,7 +721,17 @@ auto_alpha <- function(xy, k = 1, factor = 3) {
 ashape_polygon_sf <- function(pts, alpha = "auto", smoothing_factor = 3) {
   xy <- sf::st_coordinates(pts)
   xy <- xy[!duplicated(xy), 1:2, drop = FALSE]
-  xy_scaled <- scale(xy)
+
+  empty_polygon <- function() {
+    sf::st_sfc(sf::st_polygon(), crs = sf::st_crs(pts))
+  }
+
+  if (nrow(xy) < 3L) return(empty_polygon())
+
+  coordinate_scale <- apply(xy, 2L, stats::sd)
+  coordinate_scale[!is.finite(coordinate_scale) | coordinate_scale == 0] <- 1
+  xy_scaled <- sweep(xy, 2L, colMeans(xy), "-")
+  xy_scaled <- sweep(xy_scaled, 2L, coordinate_scale, "/")
 
   radius <- if (identical(alpha, "auto")) {
     auto_alpha(xy_scaled, k = 1, factor = smoothing_factor)
@@ -729,31 +739,58 @@ ashape_polygon_sf <- function(pts, alpha = "auto", smoothing_factor = 3) {
     alpha
   }
 
-  a <- alphahull::ahull(xy_scaled, alpha = radius)
-  edges <- a[["ashape.obj"]][["edges"]]
-  if (nrow(edges) == 0L) {
-    return(sf::st_sfc(crs = sf::st_crs(pts)))
+  polygonize_radius <- function(candidate_radius) {
+    a <- tryCatch(
+      alphahull::ahull(xy_scaled, alpha = candidate_radius),
+      error = function(error) NULL
+    )
+    if (is.null(a)) return(NULL)
+
+    edges <- a[["ashape.obj"]][["edges"]]
+    if (is.null(edges) || nrow(edges) == 0L) return(NULL)
+
+    idx <- edges[, c("ind1", "ind2"), drop = FALSE]
+    lines <- lapply(seq_len(nrow(idx)), function(i) {
+      sf::st_linestring(rbind(xy[idx[i, 1], ], xy[idx[i, 2], ]))
+    })
+
+    lines <- sf::st_sfc(lines, crs = sf::st_crs(pts))
+    polys <- suppressWarnings(
+      lines |>
+        sf::st_union() |>
+        sf::st_line_merge() |>
+        sf::st_polygonize() |>
+        sf::st_collection_extract("POLYGON")
+    )
+    if (length(polys) == 0L || all(sf::st_is_empty(polys))) return(NULL)
+
+    if (length(polys) > 1L) {
+      polys <- polys |>
+        sf::st_union() |>
+        sf::st_cast("MULTIPOLYGON")
+    }
+    polys
   }
 
-  idx <- edges[, c("ind1", "ind2")]
-  lines <- lapply(seq_len(nrow(idx)), function(i) {
-    sf::st_linestring(rbind(xy[idx[i, 1], ], xy[idx[i, 2], ]))
-  })
-
-  lines <- sf::st_sfc(lines, crs = sf::st_crs(pts))
-  polys <- lines |>
-    sf::st_union() |>
-    sf::st_line_merge() |>
-    sf::st_polygonize() |>
-    sf::st_collection_extract("POLYGON")
-
-  if (length(polys) > 1L) {
-    polys <- polys |>
-      sf::st_union() |>
-      sf::st_cast("MULTIPOLYGON")
+  retry_multipliers <- c(1, 1.5, 2, 3, 5)
+  for (multiplier in retry_multipliers) {
+    polys <- polygonize_radius(radius * multiplier)
+    if (!is.null(polys)) return(polys)
   }
 
-  polys
+  fallback <- suppressWarnings(
+    sf::st_convex_hull(sf::st_combine(sf::st_sfc(
+      lapply(seq_len(nrow(xy)), function(i) sf::st_point(xy[i, ])),
+      crs = sf::st_crs(pts)
+    )))
+  )
+  if (length(fallback) == 1L &&
+      !sf::st_is_empty(fallback) &&
+      as.character(sf::st_geometry_type(fallback)) %in% c("POLYGON", "MULTIPOLYGON")) {
+    return(fallback)
+  }
+
+  empty_polygon()
 }
 
 #' Filter points by local kNN density
