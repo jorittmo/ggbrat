@@ -13,25 +13,42 @@ build_brain_atlas(
   interactive = FALSE,
   surf_dir = "data/fsaverage/surf",
   surface = "pial",
+  surface_path = NULL,
   surf_blend_ratio = NULL,
   window_size = c(800L, 600L),
   include_silhouette = FALSE,
   sil_decimate = 0.1,
+  silhouette_min_length = "auto",
+  silhouette_tolerance = "auto",
   smoothing_factor = 5,
+  create_polygons = TRUE,
+  keep_z_coord = FALSE,
   shade_k = 15,
   shade_keep_quantile = 0.2,
   cell_dx = 1.5,
   cell_dy = -1,
   n_cols = 2,
   mesh_path = NULL,
-  label_array = "parcel",
+  region_array = "region",
   color_array = "color",
-  mesh_hemisphere = "subcortical"
+  mesh_hemisphere = "subcortical",
+  add_cortex = FALSE,
+  cortex_surf_dir = surf_dir,
+  cortex_surface = "pial",
+  cortex_surface_path = NULL,
+  cortex_point_method = c("density", "sample", "all"),
+  cortex_point_fraction = 0.05,
+  cortex_density_k = 15L,
+  cortex_density_keep_quantile = 0.15,
+  cortex_max_points = 50000L,
+  include_cortex_silhouette = TRUE,
+  cortex_preview_opacity = 0.1,
+  label_array = NULL
 )
 }
 \arguments{
-\item{annot_path}{For cortical surfaces, a path to a single \code{.annot} file or
-a named vector/list with \code{left} and \code{right}. May be \code{NULL} when
+\item{annot_path}{For cortical surfaces, a path to a single \code{.annot} or
+\code{.label.gii} file, or a named vector/list with \code{left} and \code{right}. May be \code{NULL} when
 \code{mesh_path} is supplied.}
 
 \item{hemi}{Hemisphere to process for cortical surfaces.}
@@ -49,7 +66,13 @@ this defaults to \code{length(camera_positions)}.}
 
 \item{surface}{A single surface name or a pair of surfaces to blend.}
 
-\item{surf_blend_ratio}{Blend ratio used when \code{surface} has length 2.}
+\item{surface_path}{Optional named \code{left}/\code{right} paths to FreeSurfer or
+\code{.surf.gii} files. Supply a named list in which each hemisphere contains
+two paths to blend explicit files. Overrides \code{surf_dir} and \code{surface}.}
+
+\item{surf_blend_ratio}{Weight assigned to the first surface when \code{surface}
+or each \code{surface_path} hemisphere contains two surfaces. The second surface
+receives weight \code{1 - surf_blend_ratio}.}
 
 \item{window_size}{PyVista window size.}
 
@@ -57,7 +80,22 @@ this defaults to \code{length(camera_positions)}.}
 
 \item{sil_decimate}{Fraction of silhouette polyline points to remove.}
 
+\item{silhouette_min_length}{Minimum retained silhouette-path length, or
+\code{"auto"} for approximately one output pixel.}
+
+\item{silhouette_tolerance}{Line-simplification tolerance, or \code{"auto"} for
+approximately half an output pixel.}
+
 \item{smoothing_factor}{Scaling factor used by \code{ashape_polygon_sf()}.}
+
+\item{create_polygons}{Whether to convert each region's projected
+\code{MULTIPOINT} geometry to a polygon. When \code{FALSE}, the region multipoints
+are returned unchanged.}
+
+\item{keep_z_coord}{Whether to retain projected display depth as a third
+coordinate in returned multipoints. When \code{create_polygons = TRUE}, region
+polygons are constructed from X and Y only, while other multipoint layers
+such as \code{cortex} retain Z.}
 
 \item{shade_k}{Number of neighbours used by \code{knn_density_filter()} during
 shade creation.}
@@ -74,28 +112,73 @@ shade creation.}
 with elements \code{left} and \code{right}. A pair follows the same mirrored-camera
 workflow as cortical hemispheres; a single mesh is rendered once per view.}
 
-\item{label_array}{Name of the mesh point-data array containing parcel names.}
+\item{region_array}{Name of the mesh point-data array containing region
+identifiers. Set this to another one-component point array, such as
+\code{"Label"}, when importing a mesh that does not contain \code{"region"}.}
 
-\item{color_array}{Optional mesh point-data array containing parcel colors.
+\item{color_array}{Optional mesh point-data array containing region colors.
 When it is absent, deterministic colors are generated automatically.}
 
 \item{mesh_hemisphere}{Value stored in the output \code{hemisphere} column for a
 generic mesh.}
+
+\item{add_cortex}{Whether to add separately projected fsaverage surfaces as
+a glass-brain context layer. This currently requires paired meshes.}
+
+\item{cortex_surf_dir}{Directory containing the left and right FreeSurfer
+cortical surfaces. The default uses \code{surf_dir}.}
+
+\item{cortex_surface}{FreeSurfer surface name used for the glass layer.}
+
+\item{cortex_surface_path}{Optional named \code{left}/\code{right} paths to FreeSurfer
+or GIFTI surfaces for the glass layer. Each hemisphere may alternatively
+contain two paths to blend. Overrides \code{cortex_surf_dir} and
+\code{cortex_surface}.}
+
+\item{cortex_point_method}{How visible cortical points are retained:
+\code{"density"} keeps projected structural concentrations, \code{"sample"} takes
+a reproducible random sample, and \code{"all"} retains every visible vertex.}
+
+\item{cortex_point_fraction}{Fraction of visible cortical vertices retained
+when \code{cortex_point_method = "sample"}.}
+
+\item{cortex_density_k}{Number of neighbors used for projected cortical
+density estimation.}
+
+\item{cortex_density_keep_quantile}{Fraction of the densest projected
+cortical vertices retained.}
+
+\item{cortex_max_points}{Maximum density-filtered points retained per
+hemisphere and view. Use \code{NULL} for no cap.}
+
+\item{include_cortex_silhouette}{Whether to return a cortical outline layer.}
+
+\item{cortex_preview_opacity}{Opacity of the cortical surfaces shown only
+while interactively choosing a camera. This preview does not participate
+in target-mesh visibility calculations.}
+
+\item{label_array}{Deprecated alias for \code{region_array}.}
 }
 \value{
-A list containing shifted atlas output with polygon geometries in
-\code{atlas}, optional \code{silhouette}, \code{camera_positions}, and \code{shade}.
+A list containing shifted atlas output in \code{atlas}, optional
+\code{silhouette}, \code{camera_positions}, \code{shade}, and optional \code{cortex} and
+\code{cortex_silhouette} glass-brain layers. \code{atlas} contains polygons when
+\code{create_polygons = TRUE} and region multipoints otherwise.
 }
 \description{
 This helper wraps the full atlas-building pipeline: visible vertex
-extraction, view shifting, parcel polygon creation, and shade geometry
+extraction, view shifting, region polygon creation, and shade geometry
 creation.
 }
 \examples{
 \dontrun{
 subcortical_atlas <- build_brain_atlas(
-  mesh_path = "data/subcortical/surfaces/Melbourne_S1.vtp",
-  n_cols = 1
+  mesh_path = c(
+    left = "data/subcortical/surfaces/Melbourne_S1_left.vtp",
+    right = "data/subcortical/surfaces/Melbourne_S1_right.vtp"
+  ),
+  add_cortex = TRUE,
+  n_cols = 2
 )
 }
 }

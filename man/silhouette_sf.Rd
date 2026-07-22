@@ -5,12 +5,29 @@
 \alias{silhoutte_sf}
 \title{Convert silhouette segments into merged sf lines}
 \usage{
-silhouette_sf(sil)
+silhouette_sf(
+  sil,
+  min_length = "auto",
+  simplify_tolerance = "auto",
+  window_size = c(800L, 600L)
+)
 
-silhoutte_sf(sil)
+silhoutte_sf(
+  sil,
+  min_length = "auto",
+  simplify_tolerance = "auto",
+  window_size = c(800L, 600L)
+)
 }
 \arguments{
 \item{sil}{Data frame with columns \code{x0}, \code{y0}, \code{x1}, \code{y1}.}
+
+\item{min_length}{Minimum retained path length, or \code{"auto"} for one pixel.}
+
+\item{simplify_tolerance}{Simplification tolerance, or \code{"auto"} for half a
+pixel.}
+
+\item{window_size}{Render window dimensions used by automatic thresholds.}
 }
 \value{
 An \code{sf} object.

@@ -10,6 +10,18 @@ nifti_to_surface(
   output_file = NULL,
   labels = NULL,
   split_hemispheres = FALSE,
+  mask_threshold = 0.5,
+  surface_style = c("faithful", "display"),
+  minimum_component_voxels = 2L,
+  closing_iterations = 1L,
+  fill_voxel_holes = TRUE,
+  distance_upsampling = 2L,
+  preserve_volume = TRUE,
+  small_region_method = c("ellipsoid", "mesh"),
+  small_region_threshold = 20L,
+  topology_correction = c("none", "genus0"),
+  closing_radius = 1,
+  max_closing_radius = 2,
   reduction = 0,
   subdivision = 0L,
   voxel_smoothing_sigma = 0,
@@ -22,10 +34,12 @@ nifti_to_surface(
 )
 }
 \arguments{
-\item{nifti_path}{Path to a discrete-label \code{.nii} or \code{.nii.gz} image.}
+\item{nifti_path}{Path to a discrete-label \code{.nii} or \code{.nii.gz} image, a
+directory of standalone region images, or a character vector of standalone
+region images.}
 
 \item{lookup_path}{Optional CSV whose first two columns contain numeric labels
-and parcel names. Headerless files are supported.}
+and region names. Headerless files are supported.}
 
 \item{output_file}{Destination \code{.vtp} file. By default it is named after the
 NIfTI image under \code{data/subcortical/surfaces}.}
@@ -34,8 +48,41 @@ NIfTI image under \code{data/subcortical/surfaces}.}
 nonzero label in the image.}
 
 \item{split_hemispheres}{Whether to create separate \verb{_left.vtp} and
-\verb{_right.vtp} meshes. Hemispheres are inferred from parcel-name components
+\verb{_right.vtp} meshes. Hemispheres are inferred from region-name components
 such as \verb{_L}, \verb{_R}, \code{left}, \code{right}, \code{lh}, and \code{rh} in the lookup table.}
+
+\item{mask_threshold}{For standalone images, voxel values greater than or
+equal to this threshold are included in the region mask.}
+
+\item{surface_style}{Standalone-mask surface style. \code{"faithful"} preserves
+the input mask; \code{"display"} enables cleanup and volume-preserving display
+geometry.}
+
+\item{minimum_component_voxels}{Display-mode voxel islands smaller than this
+are removed.}
+
+\item{closing_iterations}{Display-mode binary-closing iterations.}
+
+\item{fill_voxel_holes}{Whether display mode fills enclosed voxel holes.}
+
+\item{distance_upsampling}{Display-mode signed-distance upsampling factor.}
+
+\item{preserve_volume}{Whether display-mode meshes are rescaled to the
+cleaned mask volume after smoothing.}
+
+\item{small_region_method}{Either \code{"ellipsoid"} or \code{"mesh"} for very small
+standalone masks.}
+
+\item{small_region_threshold}{Masks with fewer voxels use the selected small
+region method.}
+
+\item{topology_correction}{Standalone display-mode topology correction.
+\code{"genus0"} adaptively closes tunnels; \code{"none"} preserves topology.}
+
+\item{closing_radius}{Initial spherical closing radius in world-coordinate
+units for topology correction.}
+
+\item{max_closing_radius}{Maximum adaptive spherical closing radius.}
 
 \item{reduction}{Proportion of triangles to remove from each region, in
 \verb{[0, 1)}. Cannot be combined with \code{subdivision}.}
@@ -71,5 +118,17 @@ vertex and face counts.
 \description{
 Creates each nonzero atlas region independently using marching cubes, then
 combines the disconnected components in one VTP file. The numeric \code{label}
-and character \code{parcel} arrays are stored as both point and cell data.
+and character \code{region} arrays are stored as both point and cell data.
+}
+\examples{
+\dontrun{
+brainstem <- nifti_to_surface(
+  nifti_path = "data/subcortical/MNI152NLin2009cAsym/Brainstem_Navigator",
+  lookup_path = paste0(
+    "data/subcortical/MNI152NLin2009cAsym/Brainstem_Navigator/",
+    "Brainstem_Navigator_lookup.csv"
+  ),
+  output_file = "data/subcortical/surfaces/Brainstem_Navigator.vtp"
+)
+}
 }

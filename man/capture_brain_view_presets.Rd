@@ -11,18 +11,20 @@ capture_brain_view_presets(
   view_names = NULL,
   surf_dir = "data/fsaverage/surf",
   surface = "pial",
+  surface_path = NULL,
   surf_blend_ratio = NULL,
   window_size = c(800L, 600L),
   sil_decimate = 0.1,
   mesh_path = NULL,
-  label_array = "parcel",
+  region_array = "region",
   color_array = "color",
-  mesh_hemisphere = "subcortical"
+  mesh_hemisphere = "subcortical",
+  label_array = NULL
 )
 }
 \arguments{
-\item{annot_path}{For cortical surfaces, a path to a single \code{.annot} file or
-a named vector/list with \code{left} and \code{right}. May be \code{NULL} when
+\item{annot_path}{For cortical surfaces, a path to a single \code{.annot} or
+\code{.label.gii} file, or a named vector/list with \code{left} and \code{right}. May be \code{NULL} when
 \code{mesh_path} is supplied.}
 
 \item{preset_hemi}{Hemisphere used to capture camera positions.}
@@ -36,7 +38,13 @@ this defaults to \code{length(camera_positions)}.}
 
 \item{surface}{A single surface name or a pair of surfaces to blend.}
 
-\item{surf_blend_ratio}{Blend ratio used when \code{surface} has length 2.}
+\item{surface_path}{Optional named \code{left}/\code{right} paths to FreeSurfer or
+\code{.surf.gii} files. Supply a named list in which each hemisphere contains
+two paths to blend explicit files. Overrides \code{surf_dir} and \code{surface}.}
+
+\item{surf_blend_ratio}{Weight assigned to the first surface when \code{surface}
+or each \code{surface_path} hemisphere contains two surfaces. The second surface
+receives weight \code{1 - surf_blend_ratio}.}
 
 \item{window_size}{PyVista window size.}
 
@@ -46,13 +54,17 @@ this defaults to \code{length(camera_positions)}.}
 with elements \code{left} and \code{right}. A pair follows the same mirrored-camera
 workflow as cortical hemispheres; a single mesh is rendered once per view.}
 
-\item{label_array}{Name of the mesh point-data array containing parcel names.}
+\item{region_array}{Name of the mesh point-data array containing region
+identifiers. Set this to another one-component point array, such as
+\code{"Label"}, when importing a mesh that does not contain \code{"region"}.}
 
-\item{color_array}{Optional mesh point-data array containing parcel colors.
+\item{color_array}{Optional mesh point-data array containing region colors.
 When it is absent, deterministic colors are generated automatically.}
 
 \item{mesh_hemisphere}{Value stored in the output \code{hemisphere} column for a
 generic mesh.}
+
+\item{label_array}{Deprecated alias for \code{region_array}.}
 }
 \value{
 A named list of camera positions.
