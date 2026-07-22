@@ -64,19 +64,48 @@ brain2d_normalize_camera_positions <- function(camera_positions) {
 #' `brain_views()` is the package-facing orchestration layer for the 2D atlas
 #' workflow. By default it expects pre-recorded camera presets so atlas builds
 #' are deterministic. Set `interactive = TRUE` when you need to record new
-#' camera positions for a custom view.
+#' camera positions for a custom view. After positioning the mesh, click the
+#' green **Use this view** control or press `U` to save the camera and close the
+#' viewer.
 #'
-#' @param annot_path For cortical surfaces, a path to a single `.annot` file or
-#'   a named vector/list with `left` and `right`. May be `NULL` when
+#' @param annot_path For cortical surfaces, a path to a single `.annot` or
+#'   `.label.gii` file, or a named vector/list with `left` and `right`. May be `NULL` when
 #'   `mesh_path` is supplied.
 #' @param mesh_path Optional path to a labelled VTK/VTP mesh, or a named pair
 #'   with elements `left` and `right`. A pair follows the same mirrored-camera
 #'   workflow as cortical hemispheres; a single mesh is rendered once per view.
-#' @param label_array Name of the mesh point-data array containing parcel names.
-#' @param color_array Optional mesh point-data array containing parcel colors.
+#' @param region_array Name of the mesh point-data array containing region
+#'   identifiers. Set this to another one-component point array, such as
+#'   `"Label"`, when importing a mesh that does not contain `"region"`.
+#' @param color_array Optional mesh point-data array containing region colors.
 #'   When it is absent, deterministic colors are generated automatically.
+#' @param label_array Deprecated alias for `region_array`.
 #' @param mesh_hemisphere Value stored in the output `hemisphere` column for a
 #'   generic mesh.
+#' @param add_cortex Whether to add separately projected fsaverage surfaces as
+#'   a glass-brain context layer. This currently requires paired meshes.
+#' @param cortex_surf_dir Directory containing the left and right FreeSurfer
+#'   cortical surfaces. The default uses `surf_dir`.
+#' @param cortex_surface FreeSurfer surface name used for the glass layer.
+#' @param cortex_surface_path Optional named `left`/`right` paths to FreeSurfer
+#'   or GIFTI surfaces for the glass layer. Each hemisphere may alternatively
+#'   contain two paths to blend. Overrides `cortex_surf_dir` and
+#'   `cortex_surface`.
+#' @param cortex_point_method How visible cortical points are retained:
+#'   `"density"` keeps projected structural concentrations, `"sample"` takes
+#'   a reproducible random sample, and `"all"` retains every visible vertex.
+#' @param cortex_point_fraction Fraction of visible cortical vertices retained
+#'   when `cortex_point_method = "sample"`.
+#' @param cortex_density_k Number of neighbors used for projected cortical
+#'   density estimation.
+#' @param cortex_density_keep_quantile Fraction of the densest projected
+#'   cortical vertices retained.
+#' @param cortex_max_points Maximum density-filtered points retained per
+#'   hemisphere and view. Use `NULL` for no cap.
+#' @param include_cortex_silhouette Whether to return a cortical outline layer.
+#' @param cortex_preview_opacity Opacity of the cortical surfaces shown only
+#'   while interactively choosing a camera. This preview does not participate
+#'   in target-mesh visibility calculations.
 #' @param hemi Hemisphere to process for cortical surfaces.
 #' @param n_views Number of views to build. If `camera_positions` is supplied,
 #'   this defaults to `length(camera_positions)`.
@@ -85,12 +114,25 @@ brain2d_normalize_camera_positions <- function(camera_positions) {
 #' @param interactive Whether to capture camera positions interactively.
 #' @param surf_dir Directory containing FreeSurfer surface files.
 #' @param surface A single surface name or a pair of surfaces to blend.
-#' @param surf_blend_ratio Blend ratio used when `surface` has length 2.
+#' @param surface_path Optional named `left`/`right` paths to FreeSurfer or
+#'   `.surf.gii` files. Supply a named list in which each hemisphere contains
+#'   two paths to blend explicit files. Overrides `surf_dir` and `surface`.
+#' @param surf_blend_ratio Weight assigned to the first surface when `surface`
+#'   or each `surface_path` hemisphere contains two surfaces. The second surface
+#'   receives weight `1 - surf_blend_ratio`.
 #' @param window_size PyVista window size.
 #' @param include_silhouette Whether to compute and return silhouettes.
 #' @param sil_decimate Fraction of silhouette polyline points to remove.
+#' @param silhouette_min_length Minimum retained silhouette-path length, or
+#'   `"auto"` for approximately one output pixel.
+#' @param silhouette_tolerance Line-simplification tolerance, or `"auto"` for
+#'   approximately half an output pixel.
+#' @param keep_z_coord Whether visible vertices should retain projected depth as
+#'   a third coordinate. The returned geometry is `MULTIPOINT Z`; Z is display
+#'   depth in the selected camera projection, not the original surface-space Z.
 #'
-#' @return A list with `atlas`, optional `silhouette`, and `camera_positions`.
+#' @return A list with `atlas`, optional `silhouette`, `camera_positions`, and,
+#'   when requested, `cortex` and `cortex_silhouette` glass-brain layers.
 #' @export
 brain_views <- function(
   annot_path = NULL,
@@ -101,17 +143,46 @@ brain_views <- function(
   interactive = FALSE,
   surf_dir = "data/fsaverage/surf",
   surface = "pial",
+  surface_path = NULL,
   surf_blend_ratio = NULL,
   window_size = c(800L, 600L),
   include_silhouette = FALSE,
   sil_decimate = 0.1,
+  silhouette_min_length = "auto",
+  silhouette_tolerance = "auto",
   mesh_path = NULL,
-  label_array = "parcel",
+  region_array = "region",
   color_array = "color",
-  mesh_hemisphere = "subcortical"
+  mesh_hemisphere = "subcortical",
+  add_cortex = FALSE,
+  cortex_surf_dir = surf_dir,
+  cortex_surface = "pial",
+  cortex_surface_path = NULL,
+  cortex_point_method = c("density", "sample", "all"),
+  cortex_point_fraction = 0.05,
+  cortex_density_k = 15L,
+  cortex_density_keep_quantile = 0.15,
+  cortex_max_points = 10000L,
+  include_cortex_silhouette = TRUE,
+  cortex_preview_opacity = 0.1,
+  keep_z_coord = FALSE,
+  label_array = NULL
 ) {
+  if (!is.null(label_array)) {
+    warning("`label_array` is deprecated; use `region_array`.", call. = FALSE)
+    region_array <- label_array
+  }
+  if (!is.character(region_array) || length(region_array) != 1L ||
+      is.na(region_array) || !nzchar(region_array)) {
+    stop("`region_array` must be one non-empty string.", call. = FALSE)
+  }
   hemi <- match.arg(hemi)
+  cortex_point_method <- match.arg(cortex_point_method)
   window_size <- as.integer(window_size)
+  if (!is.logical(keep_z_coord) || length(keep_z_coord) != 1L ||
+      is.na(keep_z_coord)) {
+    stop("`keep_z_coord` must be TRUE or FALSE.", call. = FALSE)
+  }
 
   if (interactive) {
     camera_positions <- NULL
@@ -149,15 +220,75 @@ brain_views <- function(
     if (is.null(annot_path)) {
       stop("Supply either `annot_path` or `mesh_path`.", call. = FALSE)
     }
-    surface_paths <- brain2d_surface_paths(
-      surf_dir = surf_dir,
-      surface = surface,
-      surf_blend_ratio = surf_blend_ratio
-    )
+    surface_paths <- if (is.null(surface_path)) {
+      brain2d_surface_paths(
+        surf_dir = surf_dir,
+        surface = surface,
+        surf_blend_ratio = surf_blend_ratio
+      )
+    } else {
+      brain2d_resolve_explicit_surfaces(
+        brain2d_validate_paired_paths(surface_path, "surface_path", hemi),
+        surf_blend_ratio
+      )
+    }
+  }
+  if (add_cortex && !paired_mesh) {
+    stop("`add_cortex = TRUE` currently requires a named left/right `mesh_path` pair.", call. = FALSE)
+  }
+  if (!is.numeric(cortex_point_fraction) || length(cortex_point_fraction) != 1L ||
+      is.na(cortex_point_fraction) || cortex_point_fraction <= 0 ||
+      cortex_point_fraction > 1) {
+    stop("`cortex_point_fraction` must be one number in (0, 1].", call. = FALSE)
+  }
+  if (!is.numeric(cortex_density_k) || length(cortex_density_k) != 1L ||
+      is.na(cortex_density_k) || cortex_density_k < 1 ||
+      cortex_density_k != as.integer(cortex_density_k)) {
+    stop("`cortex_density_k` must be a positive integer.", call. = FALSE)
+  }
+  if (!is.numeric(cortex_density_keep_quantile) ||
+      length(cortex_density_keep_quantile) != 1L ||
+      is.na(cortex_density_keep_quantile) || cortex_density_keep_quantile <= 0 ||
+      cortex_density_keep_quantile > 1) {
+    stop("`cortex_density_keep_quantile` must be one number in (0, 1].", call. = FALSE)
+  }
+  if (!is.null(cortex_max_points) &&
+      (!is.numeric(cortex_max_points) || length(cortex_max_points) != 1L ||
+       is.na(cortex_max_points) || cortex_max_points < 1 ||
+       cortex_max_points != as.integer(cortex_max_points))) {
+    stop("`cortex_max_points` must be NULL or a positive integer.", call. = FALSE)
+  }
+  if (!is.numeric(cortex_preview_opacity) ||
+      length(cortex_preview_opacity) != 1L ||
+      is.na(cortex_preview_opacity) || cortex_preview_opacity <= 0 ||
+      cortex_preview_opacity > 1) {
+    stop("`cortex_preview_opacity` must be one number in (0, 1].", call. = FALSE)
+  }
+  if (add_cortex) {
+    cortex_paths <- if (is.null(cortex_surface_path)) {
+      brain2d_surface_paths(
+        surf_dir = cortex_surf_dir,
+        surface = cortex_surface,
+        surf_blend_ratio = NULL
+      )
+    } else {
+      brain2d_resolve_explicit_surfaces(
+        brain2d_validate_paired_paths(
+          cortex_surface_path, "cortex_surface_path", "both"
+        ),
+        0.5
+      )
+    }
+    missing_cortex <- unlist(cortex_paths)[!file.exists(unlist(cortex_paths))]
+    if (length(missing_cortex)) {
+      stop("Cortical surface not found: ", missing_cortex[[1]], call. = FALSE)
+    }
   }
 
   out <- list()
   out_sil <- if (include_silhouette) list() else NULL
+  out_cortex <- if (add_cortex) list() else NULL
+  out_cortex_sil <- if (add_cortex && include_cortex_silhouette) list() else NULL
   captured_cameras <- vector("list", view_spec$n_views)
 
   for (index in seq_len(view_spec$n_views)) {
@@ -167,48 +298,59 @@ brain_views <- function(
     if (paired_mesh) {
       left_res <- brain2d_python_env$extract_visible_2d_vtk(
         mesh_path[["left"]],
-        label_array = label_array,
+        region_array = region_array,
         color_array = color_array,
         mirror_camera = preset_camera,
         window_size = window_size,
         return_silhouette = include_silhouette,
         sil_decimate = sil_decimate,
-        hemisphere = "left"
+        hemisphere = "left",
+        preview_surface_paths = if (interactive && add_cortex) {
+          unname(unlist(cortex_paths))
+        } else {
+          NULL
+        },
+        preview_opacity = cortex_preview_opacity,
+        keep_z_coord = keep_z_coord
       )
       captured_cameras[[index]] <- left_res[[2]]
       out[[length(out) + 1L]] <- brain2d_tag_view(left_res[[1]], "left", view_label, index)
       if (include_silhouette) {
         out_sil[[length(out_sil) + 1L]] <- brain2d_tag_silhouette(
-          left_res[[3]], "left", view_label, index
+          left_res[[3]], "left", view_label, index, window_size,
+          silhouette_min_length, silhouette_tolerance
         )
       }
 
       right_res <- brain2d_python_env$extract_visible_2d_vtk(
         mesh_path[["right"]],
-        label_array = label_array,
+        region_array = region_array,
         color_array = color_array,
         mirror_camera = captured_cameras[[index]],
         window_size = window_size,
         return_silhouette = include_silhouette,
         sil_decimate = sil_decimate,
-        hemisphere = "right"
+        hemisphere = "right",
+        keep_z_coord = keep_z_coord
       )
       out[[length(out) + 1L]] <- brain2d_tag_view(right_res[[1]], "right", view_label, index)
       if (include_silhouette) {
         out_sil[[length(out_sil) + 1L]] <- brain2d_tag_silhouette(
-          right_res[[3]], "right", view_label, index
+          right_res[[3]], "right", view_label, index, window_size,
+          silhouette_min_length, silhouette_tolerance
         )
       }
     } else if (generic_mesh) {
       mesh_res <- brain2d_python_env$extract_visible_2d_vtk(
         mesh_path,
-        label_array = label_array,
+        region_array = region_array,
         color_array = color_array,
         mirror_camera = preset_camera,
         window_size = window_size,
         return_silhouette = include_silhouette,
         sil_decimate = sil_decimate,
-        hemisphere = NULL
+        hemisphere = NULL,
+        keep_z_coord = keep_z_coord
       )
       captured_cameras[[index]] <- mesh_res[[2]]
       out[[length(out) + 1L]] <- brain2d_tag_view(
@@ -216,7 +358,8 @@ brain_views <- function(
       )
       if (include_silhouette) {
         out_sil[[length(out_sil) + 1L]] <- brain2d_tag_silhouette(
-          mesh_res[[3]], mesh_hemisphere, view_label, index
+          mesh_res[[3]], mesh_hemisphere, view_label, index, window_size,
+          silhouette_min_length, silhouette_tolerance
         )
       }
     } else if (hemi %in% c("left", "both")) {
@@ -227,12 +370,16 @@ brain_views <- function(
         mirror_camera = preset_camera,
         window_size = window_size,
         return_silhouette = include_silhouette,
-        sil_decimate = sil_decimate
+        sil_decimate = sil_decimate,
+        keep_z_coord = keep_z_coord
       )
       captured_cameras[[index]] <- left_res[[2]]
       out[[length(out) + 1L]] <- brain2d_tag_view(left_res[[1]], "left", view_label, index)
       if (include_silhouette) {
-        out_sil[[length(out_sil) + 1L]] <- brain2d_tag_silhouette(left_res[[3]], "left", view_label, index)
+        out_sil[[length(out_sil) + 1L]] <- brain2d_tag_silhouette(
+          left_res[[3]], "left", view_label, index, window_size,
+          silhouette_min_length, silhouette_tolerance
+        )
       }
 
       if (hemi == "both") {
@@ -243,11 +390,15 @@ brain_views <- function(
           mirror_camera = captured_cameras[[index]],
           window_size = window_size,
           return_silhouette = include_silhouette,
-          sil_decimate = sil_decimate
+          sil_decimate = sil_decimate,
+          keep_z_coord = keep_z_coord
         )
         out[[length(out) + 1L]] <- brain2d_tag_view(right_res[[1]], "right", view_label, index)
         if (include_silhouette) {
-          out_sil[[length(out_sil) + 1L]] <- brain2d_tag_silhouette(right_res[[3]], "right", view_label, index)
+          out_sil[[length(out_sil) + 1L]] <- brain2d_tag_silhouette(
+            right_res[[3]], "right", view_label, index, window_size,
+            silhouette_min_length, silhouette_tolerance
+          )
         }
       }
     } else {
@@ -258,12 +409,70 @@ brain_views <- function(
         mirror_camera = preset_camera,
         window_size = window_size,
         return_silhouette = include_silhouette,
-        sil_decimate = sil_decimate
+        sil_decimate = sil_decimate,
+        keep_z_coord = keep_z_coord
       )
       captured_cameras[[index]] <- right_res[[2]]
       out[[length(out) + 1L]] <- brain2d_tag_view(right_res[[1]], "right", view_label, index)
       if (include_silhouette) {
-        out_sil[[length(out_sil) + 1L]] <- brain2d_tag_silhouette(right_res[[3]], "right", view_label, index)
+        out_sil[[length(out_sil) + 1L]] <- brain2d_tag_silhouette(
+          right_res[[3]], "right", view_label, index, window_size,
+          silhouette_min_length, silhouette_tolerance
+        )
+      }
+    }
+
+    if (add_cortex) {
+      python_point_fraction <- if (cortex_point_method == "sample") {
+        cortex_point_fraction
+      } else {
+        1
+      }
+      left_cortex <- brain2d_python_env$extract_visible_2d_surface(
+        cortex_paths$left,
+        hemisphere = "left",
+        mirror_camera = captured_cameras[[index]],
+        window_size = window_size,
+        point_fraction = python_point_fraction,
+        random_seed = index,
+        return_silhouette = include_cortex_silhouette,
+        sil_decimate = sil_decimate,
+        keep_z_coord = keep_z_coord
+      )
+      right_cortex <- brain2d_python_env$extract_visible_2d_surface(
+        cortex_paths$right,
+        hemisphere = "right",
+        mirror_camera = captured_cameras[[index]],
+        window_size = window_size,
+        point_fraction = python_point_fraction,
+        random_seed = index,
+        return_silhouette = include_cortex_silhouette,
+        sil_decimate = sil_decimate,
+        keep_z_coord = keep_z_coord
+      )
+      left_cortex_df <- brain2d_filter_cortex_points(
+        left_cortex[[1]], cortex_point_method, cortex_density_k,
+        cortex_density_keep_quantile, cortex_max_points
+      )
+      right_cortex_df <- brain2d_filter_cortex_points(
+        right_cortex[[1]], cortex_point_method, cortex_density_k,
+        cortex_density_keep_quantile, cortex_max_points
+      )
+      out_cortex[[length(out_cortex) + 1L]] <- brain2d_tag_view(
+        left_cortex_df, "left", view_label, index
+      )
+      out_cortex[[length(out_cortex) + 1L]] <- brain2d_tag_view(
+        right_cortex_df, "right", view_label, index
+      )
+      if (include_cortex_silhouette) {
+        out_cortex_sil[[length(out_cortex_sil) + 1L]] <- brain2d_tag_silhouette(
+          left_cortex[[3]], "left", view_label, index, window_size,
+          silhouette_min_length, silhouette_tolerance
+        )
+        out_cortex_sil[[length(out_cortex_sil) + 1L]] <- brain2d_tag_silhouette(
+          right_cortex[[3]], "right", view_label, index, window_size,
+          silhouette_min_length, silhouette_tolerance
+        )
       }
     }
   }
@@ -278,6 +487,12 @@ brain_views <- function(
 
   if (include_silhouette) {
     result$silhouette <- do.call(rbind, out_sil)
+  }
+  if (add_cortex) {
+    result$cortex <- brain2d_vertices_to_sf(do.call(rbind, out_cortex))
+    if (include_cortex_silhouette) {
+      result$cortex_silhouette <- do.call(rbind, out_cortex_sil)
+    }
   }
 
   result
@@ -297,14 +512,20 @@ capture_brain_view_presets <- function(
   view_names = NULL,
   surf_dir = "data/fsaverage/surf",
   surface = "pial",
+  surface_path = NULL,
   surf_blend_ratio = NULL,
   window_size = c(800L, 600L),
   sil_decimate = 0.1,
   mesh_path = NULL,
-  label_array = "parcel",
+  region_array = "region",
   color_array = "color",
-  mesh_hemisphere = "subcortical"
+  mesh_hemisphere = "subcortical",
+  label_array = NULL
 ) {
+  if (!is.null(label_array)) {
+    warning("`label_array` is deprecated; use `region_array`.", call. = FALSE)
+    region_array <- label_array
+  }
   preset_hemi <- match.arg(preset_hemi)
   result <- brain_views(
     annot_path = annot_path,
@@ -314,12 +535,13 @@ capture_brain_view_presets <- function(
     interactive = TRUE,
     surf_dir = surf_dir,
     surface = surface,
+    surface_path = surface_path,
     surf_blend_ratio = surf_blend_ratio,
     window_size = window_size,
     include_silhouette = FALSE,
     sil_decimate = sil_decimate,
     mesh_path = mesh_path,
-    label_array = label_array,
+    region_array = region_array,
     color_array = color_array,
     mesh_hemisphere = mesh_hemisphere
   )
@@ -330,10 +552,19 @@ capture_brain_view_presets <- function(
 #' Convert silhouette segments into merged sf lines
 #'
 #' @param sil Data frame with columns `x0`, `y0`, `x1`, `y1`.
+#' @param min_length Minimum retained path length, or `"auto"` for one pixel.
+#' @param simplify_tolerance Simplification tolerance, or `"auto"` for half a
+#'   pixel.
+#' @param window_size Render window dimensions used by automatic thresholds.
 #'
 #' @return An `sf` object.
 #' @export
-silhouette_sf <- function(sil) {
+silhouette_sf <- function(
+  sil,
+  min_length = "auto",
+  simplify_tolerance = "auto",
+  window_size = c(800L, 600L)
+) {
   if (is.null(sil) || nrow(sil) == 0L) {
     return(sf::st_sf(
       group_id = integer(),
@@ -341,45 +572,59 @@ silhouette_sf <- function(sil) {
     ))
   }
 
-  round3 <- function(x) signif(x, digits = 4)
+  window_size <- as.numeric(window_size)
+  if (length(window_size) != 2L || any(!is.finite(window_size)) || any(window_size <= 0)) {
+    stop("`window_size` must contain two positive numbers.", call. = FALSE)
+  }
+  pixel_size <- 2 / max(window_size)
+  resolve_threshold <- function(value, auto_value, name) {
+    if (identical(value, "auto")) return(auto_value)
+    if (!is.numeric(value) || length(value) != 1L || is.na(value) || value < 0) {
+      stop("`", name, "` must be `\"auto\"` or one non-negative number.", call. = FALSE)
+    }
+    value
+  }
+  min_length <- resolve_threshold(min_length, pixel_size, "min_length")
+  simplify_tolerance <- resolve_threshold(
+    simplify_tolerance, pixel_size / 2, "simplify_tolerance"
+  )
 
-  coords <- sil |>
-    dplyr::mutate(dplyr::across(c("x0", "y0", "x1", "y1"), round3)) |>
-    dplyr::mutate(
-      start = paste(x0, y0, sep = "_"),
-      end = paste(x1, y1, sep = "_"),
-      next_start = dplyr::lead(start),
-      connected = end == next_start,
-      new_group = !connected | is.na(connected),
-      group_id = cumsum(dplyr::lag(new_group, default = TRUE))
-    )
-
-  lines_sf <- coords |>
-    dplyr::rowwise() |>
-    dplyr::mutate(
-      geometry = list(
-        sf::st_linestring(
-          matrix(c(x0, y0, x1, y1), ncol = 2, byrow = TRUE),
-          dim = "XY"
-        )
+  same_point <- function(x0, y0, x1, y1) {
+    isTRUE(all.equal(c(x0, y0), c(x1, y1), tolerance = 1e-10))
+  }
+  starts_new <- logical(nrow(sil))
+  starts_new[[1]] <- TRUE
+  if (nrow(sil) > 1L) {
+    for (index in 2:nrow(sil)) {
+      starts_new[[index]] <- !same_point(
+        sil$x0[[index]], sil$y0[[index]],
+        sil$x1[[index - 1L]], sil$y1[[index - 1L]]
       )
-    ) |>
-    dplyr::ungroup() |>
-    sf::st_as_sf()
-
-  merge_group <- function(geom) {
-    geom |>
-      sf::st_union() |>
-      sf::st_cast("MULTILINESTRING") |>
-      sf::st_line_merge()
+    }
+  }
+  group_id <- cumsum(starts_new)
+  groups <- split(seq_len(nrow(sil)), group_id)
+  lines <- lapply(groups, function(indices) {
+    xy <- rbind(
+      c(sil$x0[[indices[[1]]]], sil$y0[[indices[[1]]]]),
+      cbind(sil$x1[indices], sil$y1[indices])
+    )
+    xy <- xy[c(TRUE, rowSums(abs(diff(xy))) > 1e-12), , drop = FALSE]
+    if (nrow(xy) < 2L) return(NULL)
+    sf::st_linestring(xy, dim = "XY")
+  })
+  lines <- Filter(Negate(is.null), lines)
+  if (!length(lines)) {
+    return(sf::st_sf(group_id = integer(), geometry = sf::st_sfc(crs = sf::NA_crs_)))
   }
 
-  lines_sf |>
-    dplyr::group_by(group_id) |>
-    dplyr::summarise(geometry = merge_group(geometry), .groups = "drop") |>
-    dplyr::mutate(geom_length = as.numeric(sf::st_length(geometry))) |>
-    dplyr::filter(geom_length > 0.1) |>
-    sf::st_sf()
+  geometry <- sf::st_sfc(lines, crs = sf::NA_crs_)
+  if (simplify_tolerance > 0) {
+    geometry <- sf::st_simplify(geometry, dTolerance = simplify_tolerance)
+  }
+  result <- sf::st_sf(group_id = seq_along(geometry), geometry = geometry)
+  result$geom_length <- as.numeric(sf::st_length(result))
+  result[result$geom_length >= min_length, , drop = FALSE]
 }
 
 #' Backward-compatible alias for the earlier misspelled helper
@@ -425,7 +670,11 @@ shift_brain_views <- function(
       )
 
     shifted_geom <- mapply(
-      function(geom, dx, dy) geom + c(dx, dy),
+      function(geom, dx, dy) {
+        coordinate_names <- colnames(sf::st_coordinates(geom))
+        offset <- if ("Z" %in% coordinate_names) c(dx, dy, 0) else c(dx, dy)
+        geom + offset
+      },
       x$geometry,
       x$shift_x,
       x$shift_y,
@@ -437,9 +686,11 @@ shift_brain_views <- function(
   }
 
   if (is.list(sf_obj) && "atlas" %in% names(sf_obj)) {
-    sf_obj$atlas <- shift_one(sf_obj$atlas)
-    if ("silhouette" %in% names(sf_obj) && !is.null(sf_obj$silhouette)) {
-      sf_obj$silhouette <- shift_one(sf_obj$silhouette)
+    shift_layers <- c("atlas", "silhouette", "cortex", "cortex_silhouette")
+    for (layer in shift_layers) {
+      if (layer %in% names(sf_obj) && !is.null(sf_obj[[layer]])) {
+        sf_obj[[layer]] <- shift_one(sf_obj[[layer]])
+      }
     }
     return(sf_obj)
   }
@@ -588,6 +839,9 @@ brain2d_python_path <- function() {
 
 brain2d_load_python <- function() {
   if (!exists("extract_visible_2d", envir = brain2d_python_env, inherits = FALSE)) {
+    if (utils::packageVersion("reticulate") >= "1.41.0") {
+      reticulate::py_require(c("nibabel", "numpy", "pandas", "pyvista", "vtk"))
+    }
     reticulate::source_python(
       brain2d_python_path(),
       envir = brain2d_python_env
@@ -623,6 +877,68 @@ brain2d_surface_paths <- function(surf_dir, surface, surf_blend_ratio) {
   )
 }
 
+brain2d_validate_paired_paths <- function(paths, name, hemi = "both") {
+  if (is.character(paths)) {
+    if (!length(paths) || length(paths) > 2L || anyNA(paths) || any(!nzchar(paths))) {
+      stop("`", name, "` must contain one path or a named left/right pair.", call. = FALSE)
+    }
+    if (length(paths) == 1L) {
+      if (identical(hemi, "both")) {
+        stop("`", name, "` must provide named left and right paths for both hemispheres.",
+             call. = FALSE)
+      }
+      paths <- stats::setNames(list(paths), hemi)
+    } else {
+      if (!all(c("left", "right") %in% names(paths))) {
+        stop("A two-element `", name, "` must be named `left` and `right`.", call. = FALSE)
+      }
+      paths <- as.list(paths[c("left", "right")])
+    }
+  } else if (is.list(paths)) {
+    required <- if (identical(hemi, "both")) c("left", "right") else hemi
+    if (!all(required %in% names(paths))) {
+      stop("`", name, "` must contain the named hemisphere",
+           if (length(required) > 1L) "s `left` and `right`." else paste0(" `", hemi, "`."),
+           call. = FALSE)
+    }
+    paths <- paths[required]
+  } else {
+    stop("`", name, "` must be a path vector or a named hemisphere list.", call. = FALSE)
+  }
+  valid <- vapply(paths, function(value) {
+    is.character(value) && length(value) %in% c(1L, 2L) &&
+      !anyNA(value) && all(nzchar(value))
+  }, logical(1))
+  if (!all(valid)) {
+    stop(
+      "Each hemisphere in `", name,
+      "` must contain one surface path or two paths to blend.",
+      call. = FALSE
+    )
+  }
+  missing <- unlist(paths, use.names = FALSE)
+  missing <- missing[!file.exists(missing)]
+  if (length(missing)) stop("Surface file not found: ", missing[[1]], call. = FALSE)
+  paths
+}
+
+brain2d_resolve_explicit_surfaces <- function(paths, ratio = NULL) {
+  needs_blend <- lengths(paths) == 2L
+  if (!any(needs_blend)) return(paths)
+  if (is.null(ratio)) ratio <- 0.5
+  if (!is.numeric(ratio) || length(ratio) != 1L || is.na(ratio) ||
+      !is.finite(ratio) || ratio < 0 || ratio > 1) {
+    stop("`surf_blend_ratio` must be one number between 0 and 1.", call. = FALSE)
+  }
+  for (hemisphere in names(paths)[needs_blend]) {
+    output <- tempfile(paste0("ggbrat-", hemisphere, "-blend-"), fileext = ".surf")
+    paths[[hemisphere]] <- brain2d_python_env$blend_surface_files(
+      unname(paths[[hemisphere]]), output, ratio = ratio
+    )
+  }
+  paths
+}
+
 brain2d_annot_path <- function(annot_path, hemisphere) {
   if (length(annot_path) == 1L) {
     return(annot_path[[1]])
@@ -643,8 +959,21 @@ brain2d_tag_view <- function(df, hemisphere, view_label, view_index) {
   df
 }
 
-brain2d_tag_silhouette <- function(df, hemisphere, view_label, view_index) {
-  sil <- silhouette_sf(df)
+brain2d_tag_silhouette <- function(
+  df,
+  hemisphere,
+  view_label,
+  view_index,
+  window_size = c(800L, 600L),
+  min_length = "auto",
+  simplify_tolerance = "auto"
+) {
+  sil <- silhouette_sf(
+    df,
+    min_length = min_length,
+    simplify_tolerance = simplify_tolerance,
+    window_size = window_size
+  )
   sil$hemisphere <- hemisphere
   sil$view <- view_label
   sil$int_view <- view_index
@@ -652,11 +981,14 @@ brain2d_tag_silhouette <- function(df, hemisphere, view_label, view_index) {
 }
 
 brain2d_vertices_to_sf <- function(out) {
-  pts_vert <- sf::st_as_sfc(sf::st_as_sf(out, coords = c("x", "y"), crs = NA))
+  coordinate_columns <- if ("z" %in% names(out)) c("x", "y", "z") else c("x", "y")
+  pts_vert <- sf::st_as_sfc(
+    sf::st_as_sf(out, coords = coordinate_columns, crs = NA)
+  )
   pts_vert <- sf::st_sf(
     geometry = pts_vert,
     color = out$color,
-    region = out$parcel,
+    region = out$region,
     hemisphere = out$hemisphere,
     view = out$view,
     int_view = out$int_view
@@ -670,4 +1002,30 @@ brain2d_vertices_to_sf <- function(out) {
       .groups = "drop"
     ) |>
     dplyr::filter(vert_size > 5)
+}
+
+brain2d_filter_cortex_points <- function(
+  points,
+  method = c("density", "sample", "all"),
+  k = 15L,
+  keep_quantile = 0.15,
+  max_points = 10000L
+) {
+  method <- match.arg(method)
+  if (method != "density" || nrow(points) < 3L) {
+    return(points)
+  }
+
+  k <- min(as.integer(k), nrow(points) - 1L)
+  density <- knn_density_filter(
+    as.matrix(points[, c("x", "y")]),
+    k = k,
+    keep_quantile = keep_quantile
+  )
+  indices <- which(density$keep)
+  if (!is.null(max_points) && length(indices) > max_points) {
+    indices <- indices[order(density$rho[indices], decreasing = TRUE)]
+    indices <- indices[seq_len(max_points)]
+  }
+  points[sort(indices), , drop = FALSE]
 }
