@@ -1,0 +1,17 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^dev$
+^python$
+^brain_2d_exact.*\.csv$
+^mesh_points_with_visibility\.csv$
+^segments\.csv$
+^temp\.png$
+^visible_.*\.obj$
+^subject-.*$
+^subject_.*$
+^lh_inf\.obj$
+^rh\.orig\.nofix$
+^forggplotMTLfig_.*\.svg$
+^mtl_atlas\.rds$
+^schaefer_annots$
+^schaefer_annots\.zip$

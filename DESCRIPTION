@@ -9,16 +9,23 @@ Description: Tools for deriving 2D atlas geometries from different types of brai
     extraction with R-based sf workflows so atlas files can be prepared for
     ggplot-style plotting.
 License: MIT
+SystemRequirements: Python (>= 3.9; optional, for surface atlas construction)
 Encoding: UTF-8
 LazyData: true
 Imports:
     alphahull,
     dplyr,
     FNN,
+    isoband,
     reticulate,
+    RNifti,
     sf,
-    stats
+    stats,
+    xml2
 Suggests:
+    concaveman,
+    htmltools,
+    shiny,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
