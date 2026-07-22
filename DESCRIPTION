@@ -12,6 +12,8 @@ License: MIT + file LICENSE
 SystemRequirements: Python (>= 3.9; optional, for surface atlas construction)
 Encoding: UTF-8
 LazyData: true
+Depends:
+      R (>= 4.1.0)
 Imports:
     alphahull,
     dplyr,
@@ -31,3 +33,5 @@ Suggests:
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 Config/roxygen2/version: 8.0.0
+ 
+
