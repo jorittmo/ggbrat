@@ -21,9 +21,12 @@ help of the interactive view selector
 Example surfaces/textures (plotted only using `ggplot`):
 ![](inst/images/surface_strutctures.png)
 
-<img src="inst/images/view_selector.png" width="49%">
+<img src="inst/images/selec1.png" width="24%">
+<img src="inst/images/selec2.png" width="24%">
+<img src="inst/images/selec3.png" width="24%">
+<img src="inst/images/selec4.png" width="24%">
 
-![](inst/images/view_points.png)
+![](inst/images/view_points2.png)
 
 The package supports many atlases and types but as long as you have a surface with corresponding labels (freesurfer, giftis, .vtp meshes) you can kind of build from whatever you want. 
 E.g. this surface rendering of the medial temporal lobe (waddup @pyushkevich), however, the shading and region boundaries will be better the higher the detail of the mesh. 
