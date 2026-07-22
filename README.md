@@ -21,10 +21,14 @@ help of the interactive view selector
 Example surfaces/textures (plotted only using `ggplot`):
 ![](inst/images/surface_strutctures.png)
 
-<img src="inst/images/selec1.png" width="24%">
-<img src="inst/images/selec2.png" width="24%">
-<img src="inst/images/selec3.png" width="24%">
-<img src="inst/images/selec4.png" width="24%">
+<table>
+  <tr>
+    <td><img src="inst/images/selec1.png" width="100%"></td>
+    <td><img src="inst/images/selec2.png" width="100%"></td>
+    <td><img src="inst/images/selec3.png" width="100%"></td>
+    <td><img src="inst/images/selec4.png" width="100%"></td>
+  </tr>
+</table>
 
 ![](inst/images/view_points2.png)
 
