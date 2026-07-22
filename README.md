@@ -21,14 +21,19 @@ help of the interactive view selector
 Example surfaces/textures (plotted only using `ggplot`):
 ![](inst/images/surface_strutctures.png)
 
-![](inst/images/view_selector.png){width="50%" fig-align="center"}
+<img src="inst/images/view_selector.png" width="49%">
 
 ![](inst/images/view_points.png)
 
 The package supports many atlases and types but as long as you have a surface with corresponding labels (freesurfer, giftis, .vtp meshes) you can kind of build from whatever you want. 
 E.g. this surface rendering of the medial temporal lobe (@pyushkevich), however, the shading and region boundaries will be better the higher the detail of the mesh. 
 
-![](inst/images/mtl_selection.png){width="49%"}![](inst/images/mtl_rendering.png){width="49%"}
+<table>
+  <tr>
+    <td><img src="inst/images/mtl_selection.png" width="400"></td>
+    <td><img src="inst/images/mtl_rendering.png" width="400"></td>
+  </tr>
+</table>
 
 Furthermore, the package lets you create surface meshes from nifti atlases (I've only tested this with subcortical atlases as of yet), from which you then can build 2D atlases. 
 
