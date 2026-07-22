@@ -111,6 +111,8 @@ brain2d_normalize_camera_positions <- function(camera_positions) {
 #'   this defaults to `length(camera_positions)`.
 #' @param view_names Optional names for the views.
 #' @param camera_positions Optional list of saved PyVista camera positions.
+#'   When `NULL` in non-interactive mode, bundled presets are used and the
+#'   first `n_views` presets are selected.
 #' @param interactive Whether to capture camera positions interactively.
 #' @param surf_dir Directory containing FreeSurfer surface files. When `NULL`,
 #'   the requested fsaverage surfaces are downloaded to and resolved from the
@@ -186,10 +188,12 @@ brain_views <- function(
     stop("`keep_z_coord` must be TRUE or FALSE.", call. = FALSE)
   }
 
+  using_default_camera_positions <- FALSE
   if (interactive) {
     camera_positions <- NULL
   } else if (is.null(camera_positions)) {
     camera_positions <- brain2d_default_camera_positions()
+    using_default_camera_positions <- !is.null(camera_positions)
   }
 
   if (!is.null(camera_positions)) {
@@ -200,7 +204,8 @@ brain_views <- function(
     n_views = n_views,
     view_names = view_names,
     camera_positions = camera_positions,
-    interactive = interactive
+    interactive = interactive,
+    subset_camera_positions = using_default_camera_positions
   )
 
   brain2d_load_python()
@@ -820,7 +825,13 @@ knn_density_filter <- function(X, k = 10, keep_quantile = 0.5, dim = 2) {
   )
 }
 
-brain2d_prepare_views <- function(n_views, view_names, camera_positions, interactive) {
+brain2d_prepare_views <- function(
+  n_views,
+  view_names,
+  camera_positions,
+  interactive,
+  subset_camera_positions = FALSE
+) {
   if (is.null(n_views)) {
     n_views <- if (is.null(camera_positions)) 1L else length(camera_positions)
   }
@@ -835,6 +846,11 @@ brain2d_prepare_views <- function(n_views, view_names, camera_positions, interac
       "Preset workflow requires `camera_positions`. Use `interactive = TRUE` to capture new presets.",
       call. = FALSE
     )
+  }
+
+  if (subset_camera_positions && !is.null(camera_positions) &&
+      length(camera_positions) >= n_views) {
+    camera_positions <- camera_positions[seq_len(n_views)]
   }
 
   if (!is.null(camera_positions) && length(camera_positions) != n_views) {

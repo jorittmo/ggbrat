@@ -58,7 +58,9 @@ this defaults to \code{length(camera_positions)}.}
 
 \item{view_names}{Optional names for the views.}
 
-\item{camera_positions}{Optional list of saved PyVista camera positions.}
+\item{camera_positions}{Optional list of saved PyVista camera positions.
+When \code{NULL} in non-interactive mode, bundled presets are used and the
+first \code{n_views} presets are selected.}
 
 \item{interactive}{Whether to capture camera positions interactively.}
 

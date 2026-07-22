@@ -1,19 +1,36 @@
-test_that("brain_views requires presets in non-interactive mode", {
-  expect_error(
-    brain_views(
-      annot_path = "dummy.annot",
-      interactive = FALSE,
-      n_views = 1
-    ),
-    "camera_positions"
-  )
-})
-
 test_that("brain_views requires a cortical annotation or generic mesh", {
   cameras <- list(list(c(1, 0, 0), c(0, 0, 0), c(0, 0, 1)))
   expect_error(
     brain_views(annot_path = NULL, camera_positions = cameras),
     "either `annot_path` or `mesh_path`"
+  )
+})
+
+test_that("bundled camera presets are subset to the requested views", {
+  cameras <- list(
+    lateral = list(c(1, 0, 0), c(0, 0, 0), c(0, 0, 1)),
+    medial = list(c(-1, 0, 0), c(0, 0, 0), c(0, 0, 1))
+  )
+
+  one_view <- ggbrat:::brain2d_prepare_views(
+    n_views = 1,
+    view_names = NULL,
+    camera_positions = cameras,
+    interactive = FALSE,
+    subset_camera_positions = TRUE
+  )
+  expect_length(one_view$camera_positions, 1L)
+  expect_identical(one_view$view_names, "lateral")
+
+  expect_error(
+    ggbrat:::brain2d_prepare_views(
+      n_views = 1,
+      view_names = NULL,
+      camera_positions = cameras,
+      interactive = FALSE,
+      subset_camera_positions = FALSE
+    ),
+    "must have length"
   )
 })
 
