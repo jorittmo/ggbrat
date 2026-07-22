@@ -494,7 +494,7 @@ vol_select_slices_interactive <- function(
     output$coordinate <- shiny::renderText({
       shiny::req(input$axis, input$slice)
       coordinate <- axis_info[[input$axis]]$coordinates[[input$slice]]
-      sprintf("Voxel %d · world coordinate %.2f mm", input$slice, coordinate)
+      sprintf("Voxel %d | world coordinate %.2f mm", input$slice, coordinate)
     })
     output$progress <- shiny::renderText({
       sprintf("Saved views: %d of %d", nrow(saved()), n_views)
