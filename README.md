@@ -23,10 +23,17 @@ Example surfaces/textures (plotted only using `ggplot`):
 
 <table>
   <tr>
+<<<<<<< HEAD
     <td><img src="inst/images/selec1.png" width="100%"></td>
     <td><img src="inst/images/selec2.png" width="100%"></td>
     <td><img src="inst/images/selec3.png" width="100%"></td>
     <td><img src="inst/images/selec4.png" width="100%"></td>
+=======
+    <td><img src="inst/images/selec1.png" width="24%"></td>
+    <td><img src="inst/images/selec2.png" width="24%"></td>
+    <td><img src="inst/images/selec3.png" width="24%"></td>
+    <td><img src="inst/images/selec4.png" width="24%"></td>
+>>>>>>> 9a85a9e3d5d205c3c8dc24abe5bbb36d304d0ea4
   </tr>
 </table>
 
