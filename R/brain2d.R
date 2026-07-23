@@ -668,12 +668,12 @@ shift_brain_views <- function(
 
     x <- x |>
       dplyr::mutate(
-        hemi_n = ifelse(hemisphere == "right", 1L, 0L),
-        idx = view_index * n_cols + hemi_n,
-        row = idx %/% n_cols,
-        col = idx %% n_cols,
-        shift_x = col * cell_dx,
-        shift_y = row * cell_dy
+        hemi_n = ifelse(.data$hemisphere == "right", 1L, 0L),
+        idx = view_index * n_cols + .data$hemi_n,
+        row = .data$idx %/% n_cols,
+        col = .data$idx %% n_cols,
+        shift_x = .data$col * cell_dx,
+        shift_y = .data$row * cell_dy
       )
 
     shifted_geom <- mapply(
@@ -689,7 +689,10 @@ shift_brain_views <- function(
     )
 
     x$geometry <- sf::st_sfc(shifted_geom, crs = sf::st_crs(x))
-    dplyr::select(x, -hemi_n, -idx, -row, -col, -shift_x, -shift_y)
+    dplyr::select(
+      x,
+      -dplyr::all_of(c("hemi_n", "idx", "row", "col", "shift_x", "shift_y"))
+    )
   }
 
   if (is.list(sf_obj) && "atlas" %in% names(sf_obj)) {
@@ -1064,13 +1067,15 @@ brain2d_vertices_to_sf <- function(out) {
   )
 
   pts_vert |>
-    dplyr::group_by(region, hemisphere, view, int_view, color) |>
+    dplyr::group_by(
+      .data$region, .data$hemisphere, .data$view, .data$int_view, .data$color
+    ) |>
     dplyr::summarise(
       vert_size = dplyr::n(),
-      geometry = sf::st_combine(geometry),
+      geometry = sf::st_combine(.data$geometry),
       .groups = "drop"
     ) |>
-    dplyr::filter(vert_size > 5)
+    dplyr::filter(.data$vert_size > 5)
 }
 
 brain2d_filter_cortex_points <- function(

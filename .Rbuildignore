@@ -17,6 +17,6 @@
 ^schaefer_annots\.zip$
 ^data-raw$
 ^local-data$
-
+^inst/images/.*\.gif$
 ^LICENSE\.md$
 ^\.github$

@@ -569,7 +569,7 @@ vol_select_slices_interactive <- function(
   selected <- shiny::runApp(shiny::shinyApp(ui, server), launch.browser = TRUE)
   if (is.null(selected) || !nrow(selected)) return(NULL)
   selected$selection_order <- seq_len(nrow(selected))
-  selected$int_view <- ave(
+  selected$int_view <- stats::ave(
     selected$selection_order, selected$axis, FUN = seq_along
   )
   selected$view <- paste(selected$axis, selected$int_view, sep = "_")

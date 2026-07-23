@@ -167,8 +167,8 @@ build_brain_atlas <- function(
     for (view_i in unique(atlas_shifted$atlas$view)) {
       coords <- sf::st_coordinates(
         atlas_shifted$atlas |>
-          dplyr::filter(hemisphere == hemi_i, view == view_i) |>
-          dplyr::pull(geometry)
+          dplyr::filter(.data$hemisphere == hemi_i, .data$view == view_i) |>
+          dplyr::pull(.data$geometry)
       )[, 1:2, drop = FALSE]
 
       coords_filtered <- knn_density_filter(
@@ -421,18 +421,18 @@ build_atlas_svg <- function(
     box <- sf::st_bbox(atlas)
     atlas <- atlas |>
       dplyr::mutate(
-        geometry = geometry * matrix(c(1, 0, 0, -1), nrow = 2L) +
+        geometry = .data$geometry * matrix(c(1, 0, 0, -1), nrow = 2L) +
           c(0, box[["ymin"]] + box[["ymax"]])
       )
   }
   if (combine_regions) {
     region_order <- unique(atlas$region)
     atlas <- atlas |>
-      dplyr::group_by(region) |>
-      dplyr::summarise(geometry = sf::st_union(geometry), .groups = "drop") |>
-      dplyr::mutate(.region_order = match(region, region_order)) |>
-      dplyr::arrange(.region_order) |>
-      dplyr::select(-.region_order)
+      dplyr::group_by(.data$region) |>
+      dplyr::summarise(geometry = sf::st_union(.data$geometry), .groups = "drop") |>
+      dplyr::mutate(.region_order = match(.data$region, region_order)) |>
+      dplyr::arrange(.data$.region_order) |>
+      dplyr::select(-dplyr::all_of(".region_order"))
   }
   sf::st_make_valid(atlas)
 }

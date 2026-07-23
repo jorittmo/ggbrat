@@ -20,6 +20,7 @@ Imports:
     FNN,
     isoband,
     reticulate (>= 1.41.0),
+    rlang,
     RNifti,
     sf,
     smoothr,
