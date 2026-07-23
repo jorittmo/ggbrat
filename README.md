@@ -109,7 +109,6 @@ For more detail, head over to:
 
 Plotting premade atlases, downloading resources, and using the volumetric and SVG functionality require R only. Surface projection and NIfTI-to-mesh conversion additionally require Python 3.9 or newer. With `reticulate >= 1.41`, ggbrat declares the required Python packages when those functions are first used.
 
-
 ## Acknowledgements 
 
 All atlases and resources in this package comes from the enormous work of the neuroimaging community. Source citation 
@@ -122,7 +121,8 @@ list_resources()
 If you use any of them in your work, please cite the original sources.
 
 Available premade atlases can be found below. This will be updated as new atlases gets added, but I encourage you to crate your own 2D rendering instead! 
-Some of the premade atlases (e.g. Brainstem_Navigator and SUIT) are not great
+Some of the premade atlases (e.g. Brainstem_Navigator and SUIT) could use some more love in their creation (alternatively, just use [`subcortex_visualization`](https://github.com/anniegbryant/subcortex_visualization)).
+
 
 |Name                                      |Source                                                                                                                     |
 |:-----------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------|
