@@ -1,11 +1,11 @@
 Package: ggbrat
 Type: Package
-Title: Build 2D Brain Atlases from Surface Meshes
+Title: Brain Atlases for ggplot2
 Version: 0.1.0
 Authors@R:
     person("Jonathan", "Rittmo", email = "jorittmo@proton.me", role = c("aut", "cre"))
 Description: Tools for deriving 2D atlas geometries from different types of brain surfaces,
-    meshes and annotations preparing them for ggplot-style plotting.
+    meshes, volumes and annotations preparing them for ggplot-style plotting.
 License: MIT + file LICENSE
 SystemRequirements: Python (>= 3.9; optional, for surface atlas construction)
 Encoding: UTF-8

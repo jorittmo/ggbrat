@@ -35,6 +35,207 @@ resource_read_csv <- function(path) {
   utils::read.csv(path, stringsAsFactors = FALSE, check.names = FALSE)
 }
 
+resource_citations <- function(name) {
+  citations <- rep(NA_character_, length(name))
+
+  set_citation <- function(pattern, value) {
+    matches <- is.na(citations) & grepl(pattern, name, ignore.case = TRUE)
+    citations[matches] <<- value
+  }
+
+  # More specific names must be matched before their parent atlas families.
+  set_citation(
+    "^aparc\\.a2005s$",
+    paste0(
+      "Fischl B, van der Kouwe A, Destrieux C, et al. (2004). ",
+      "Automatically parcellating the human cerebral cortex. Cerebral Cortex ",
+      "14:11-22. doi:10.1093/cercor/bhg087."
+    )
+  )
+  set_citation(
+    "^aparc\\.a2009s$",
+    paste0(
+      "Destrieux C, Fischl B, Dale A, Halgren E (2010). Automatic ",
+      "parcellation of human cortical gyri and sulci using standard anatomical ",
+      "nomenclature. NeuroImage 53:1-15. ",
+      "doi:10.1016/j.neuroimage.2010.06.010."
+    )
+  )
+  set_citation(
+    "^aparc$",
+    paste0(
+      "Desikan RS, Segonne F, Fischl B, et al. (2006). An automated labeling ",
+      "system for subdividing the human cerebral cortex on MRI scans into ",
+      "gyral based regions of interest. NeuroImage 31:968-980. ",
+      "doi:10.1016/j.neuroimage.2006.01.021."
+    )
+  )
+  set_citation(
+    "^aseg_subcortex$",
+    paste0(
+      "Fischl B, Salat DH, Busa E, et al. (2002). Whole brain segmentation: ",
+      "automated labeling of neuroanatomical structures in the human brain. ",
+      "Neuron 33:341-355. doi:10.1016/S0896-6273(02)00569-X."
+    )
+  )
+  set_citation(
+    "^HCP-MMP1$",
+    paste0(
+      "Glasser MF, Coalson TS, Robinson EC, et al. (2016). A multi-modal ",
+      "parcellation of human cerebral cortex. Nature 536:171-178. ",
+      "doi:10.1038/nature18933."
+    )
+  )
+  set_citation(
+    "^HO_FSSpace$",
+    paste0(
+      "Harvard-Oxford Cortical Structural Atlas, Harvard Center for ",
+      "Morphometric Analysis and FMRIB Software Library. RRID:SCR_001476."
+    )
+  )
+  set_citation(
+    "^PALS_B12_",
+    paste0(
+      "Van Essen DC (2005). A Population-Average, Landmark- and ",
+      "Surface-based (PALS) atlas of human cerebral cortex. NeuroImage ",
+      "28:635-662. doi:10.1016/j.neuroimage.2005.06.058."
+    )
+  )
+  set_citation(
+    "^Schaefer2018_.*Kong2022",
+    paste0(
+      "Schaefer A, Kong R, Gordon EM, et al. (2018). Local-global ",
+      "parcellation of the human cerebral cortex from intrinsic functional ",
+      "connectivity MRI. Cerebral Cortex 28:3095-3114. ",
+      "doi:10.1093/cercor/bhx179; Kong R, et al. (2021). ",
+      "Individual-specific areal-level parcellations improve functional ",
+      "connectivity prediction of behavior. Cerebral Cortex 31:4477-4500. ",
+      "doi:10.1093/cercor/bhab101."
+    )
+  )
+  set_citation(
+    "^Schaefer2018_",
+    paste0(
+      "Schaefer A, Kong R, Gordon EM, et al. (2018). Local-global ",
+      "parcellation of the human cerebral cortex from intrinsic functional ",
+      "connectivity MRI. Cerebral Cortex 28:3095-3114. ",
+      "doi:10.1093/cercor/bhx179."
+    )
+  )
+  set_citation(
+    "^Yeo2011_",
+    paste0(
+      "Yeo BTT, Krienen FM, Sepulcre J, et al. (2011). The organization of ",
+      "the human cerebral cortex estimated by intrinsic functional ",
+      "connectivity. Journal of Neurophysiology 106:1125-1165. ",
+      "doi:10.1152/jn.00338.2011."
+    )
+  )
+  set_citation(
+    "^AICHA_subcortex$",
+    paste0(
+      "Joliot M, Jobard G, Naveau M, et al. (2015). AICHA: An atlas of ",
+      "intrinsic connectivity of homotopic areas. Journal of Neuroscience ",
+      "Methods 254:46-59. doi:10.1016/j.jneumeth.2015.07.013."
+    )
+  )
+  set_citation(
+    "^Brainnetome_subcortex$",
+    paste0(
+      "Fan L, Li H, Zhuo J, et al. (2016). The Human Brainnetome Atlas: ",
+      "A new brain atlas based on connectional architecture. Cerebral Cortex ",
+      "26:3508-3526. doi:10.1093/cercor/bhw157."
+    )
+  )
+  set_citation(
+    "^Brainstem_Navigator",
+    paste0(
+      "Bianciardi M and the Brainstem Imaging Laboratory (2024). Brainstem ",
+      "Navigator v1.0: an in-vivo MRI atlas of human brainstem nuclei. ",
+      "doi:10.25790/bml0cm.96."
+    )
+  )
+  set_citation(
+    "^CIT168_subcortex$",
+    paste0(
+      "Pauli WM, Nili AN, Tyszka JM (2018). A high-resolution probabilistic ",
+      "in vivo atlas of human subcortical brain nuclei. Scientific Data ",
+      "5:180063. doi:10.1038/sdata.2018.63."
+    )
+  )
+  set_citation(
+    "^Melbourne_S[1-4]$",
+    paste0(
+      "Tian Y, Margulies DS, Breakspear M, Zalesky A (2020). Topographic ",
+      "organization of the human subcortex unveiled with functional ",
+      "connectivity gradients. Nature Neuroscience 23:1421-1432. ",
+      "doi:10.1038/s41593-020-00711-6."
+    )
+  )
+  set_citation(
+    "^SUIT_cerebellar_lobule$",
+    paste0(
+      "Diedrichsen J, Balsters JH, Flavell J, Cussans E, Ramnani N (2009). ",
+      "A probabilistic MR atlas of the human cerebellum. NeuroImage 46:39-46. ",
+      "doi:10.1016/j.neuroimage.2009.01.045."
+    )
+  )
+  set_citation(
+    "^Thalamus_HCP$",
+    paste0(
+      "Najdenovska E, Aleman-Gomez Y, Battistella G, et al. (2018). In-vivo ",
+      "probabilistic atlas of human thalamic nuclei based on diffusion-weighted ",
+      "magnetic resonance imaging. Scientific Data 5:180270. ",
+      "doi:10.1038/sdata.2018.270."
+    )
+  )
+  set_citation(
+    "^Thalamus_THOMAS$",
+    paste0(
+      "Su JH, Thomas FT, Kasoff WS, et al. (2019). Thalamus Optimized Multi ",
+      "Atlas Segmentation (THOMAS): fast, fully automated segmentation of ",
+      "thalamic nuclei from structural MRI. NeuroImage 194:272-282. ",
+      "doi:10.1016/j.neuroimage.2019.03.021."
+    )
+  )
+  set_citation(
+    "^fsaverage_",
+    paste0(
+      "Fischl B, Sereno MI, Dale AM (1999). Cortical surface-based analysis. ",
+      "II: Inflation, flattening, and a surface-based coordinate system. ",
+      "NeuroImage 9:195-207. doi:10.1006/nimg.1998.0396."
+    )
+  )
+  set_citation(
+    "^tpl-MNI152NLin2009cAsym_",
+    paste0(
+      "Fonov V, Evans AC, Botteron K, Almli CR, McKinstry RC, Collins DL ",
+      "(2011). Unbiased average age-appropriate atlases for pediatric studies. ",
+      "NeuroImage 54:313-327. doi:10.1016/j.neuroimage.2010.07.033."
+    )
+  )
+  set_citation(
+    "^data_StateMTL_241118_0$",
+    paste0(
+      "No definitive source citation could be identified from the mesh ",
+      "filename alone; verify the citation with the provider before reuse."
+    )
+  )
+
+  citations
+}
+
+resource_add_citations <- function(catalog) {
+  inferred <- resource_citations(catalog$name)
+  if (!"citation" %in% names(catalog)) {
+    catalog$citation <- inferred
+  } else {
+    missing <- is.na(catalog$citation) | !nzchar(trimws(catalog$citation))
+    catalog$citation[missing] <- inferred[missing]
+  }
+  catalog
+}
+
 #' Inspect the ggbrat resource catalog
 #'
 #' The package ships with a catalog snapshot. Set `refresh = TRUE` to read the
@@ -43,8 +244,9 @@ resource_read_csv <- function(path) {
 #' @param refresh Whether to download the current remote catalog.
 #' @param quiet Whether to suppress download progress.
 #'
-#' @return A data frame containing one row per resource. The associated file
-#'   table is stored in the `files` attribute.
+#' @return A data frame containing one row per resource, including its
+#'   recommended source `citation`. The associated file table is stored in the
+#'   `files` attribute.
 #' @export
 resource_catalog <- function(refresh = FALSE, quiet = FALSE) {
   if (!is.logical(refresh) || length(refresh) != 1L || is.na(refresh)) {
@@ -75,6 +277,7 @@ resource_catalog <- function(refresh = FALSE, quiet = FALSE) {
     files <- resource_read_csv(paths[["files"]])
   }
 
+  catalog <- resource_add_citations(catalog)
   required <- c("id", "name", "type", "release_tag", "asset", "url", "md5")
   if (!all(required %in% names(catalog)) ||
       !all(c("resource_id", "role", "path", "md5") %in% names(files))) {
@@ -94,7 +297,8 @@ resource_catalog <- function(refresh = FALSE, quiet = FALSE) {
 #' @param refresh Whether to refresh the mutable remote catalog.
 #' @param cache_dir Resource cache directory.
 #'
-#' @return A resource catalog data frame.
+#' @return A resource catalog data frame. The `citation` column gives the
+#'   recommended source citation for each resource.
 #' @export
 list_resources <- function(type = NULL, installed = NULL, refresh = FALSE,
                            cache_dir = ggbrat_cache_dir()) {

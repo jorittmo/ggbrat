@@ -76,6 +76,20 @@ test_that("resource catalog resolves ids, aliases, and all categories", {
   })
 })
 
+test_that("bundled resources have source citations", {
+  if (exists("catalog", envir = .ggbrat_resource_state, inherits = FALSE)) {
+    rm("catalog", envir = .ggbrat_resource_state)
+  }
+  catalog <- resource_catalog()
+  expect_true("citation" %in% names(catalog))
+  expect_false(anyNA(catalog$citation))
+  expect_true(all(nzchar(catalog$citation)))
+  expect_match(
+    catalog$citation[catalog$name == "Yeo2011_7Networks_N1000"][1L],
+    "Yeo BTT"
+  )
+})
+
 test_that("typed resource functions download and reuse validated cache files", {
   with_mock_resources({
     resource_catalog(refresh = TRUE, quiet = TRUE)
