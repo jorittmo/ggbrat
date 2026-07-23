@@ -20,9 +20,14 @@ list_resources()
 list_resources(type = "atlas")
 ```
 
-> \[!NOTE\] All of the resources provided by ggbrat are available
-> online, and their provenance, license and correct citation will be
-> included. This is however work still being done.
+The returned `citation` column gives the recommended source citation for
+every resource. Derived forms of the same atlas—such as its annotation,
+mesh, and premade ggbrat RDS—share the citation of the atlas from which
+they were made.
+
+> \[!NOTE\] Provenance and licensing metadata are still being audited
+> for the resource catalog. Check the original source before
+> redistributing a resource.
 
 Use
 [`resource_info()`](https://jorittmo.github.io/ggbrat/reference/resource_info.md)

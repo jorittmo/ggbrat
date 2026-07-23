@@ -1,15 +1,17 @@
-# ggbrat
+# ggbrat: Brain Atlases for ggplot2!
 
 Do you use ggplot to visualize imaging data on brain atlases? Welcome to
 ggbrat: brain atlases for ggplot2!
 
 There is, of course, already the wonderful and popular
 [`ggseg`](https://ggseg.github.io/ggseg/) package for this particular
-purpose, but ggbrat offers something slightly different. While `ggseg`
-provides prebuilt atlases and modified `geoms`, the focus of ggbrat is
-to provide tools for building the 2D atlases themselves (although it
-also comes with many prebuilt atlases). ggbrat builds two-dimensional
-brain atlases that work directly with
+purpose (and
+[`subcortex_visualization`](https://github.com/anniegbryant/subcortex_visualization)
+for subcortex), but ggbrat offers something slightly different. While
+`ggseg` provides prebuilt atlases and modified `geoms`, the focus of
+ggbrat is to provide tools for building the 2D atlases themselves
+(although it also comes with many prebuilt atlases). ggbrat builds
+two-dimensional brain atlases that work directly with
 [`ggplot2`](https://ggplot2.tidyverse.org/) and
 [`sf`](https://r-spatial.github.io/sf/). It can turn cortical
 annotations, labelled (subcortical) surface meshes, volumetric NIfTI
@@ -37,11 +39,11 @@ Example of four view angles rendered to 2D:
 ![](reference/figures/view_points2.png)
 
 The package supports many atlases and file types. As long as you have a
-surface with corresponding labels (FreeSurfer, GIFTI, or `.vtp` meshes),
-you can kind of build from whatever you want. For example, here is a
-surface rendering of the medial temporal lobe (shout out to
-@pyushkevich). The shading and region boundaries will, however, be
-better the more detailed the mesh is.
+surface (or volume) with corresponding labels (FreeSurfer, GIFTI, or
+`.vtp` meshes), you can kind of build from whatever you want. For
+example, here is a surface rendering of the medial temporal lobe (shout
+out to @pyushkevich). The shading and region boundaries will, however,
+be better the more detailed the mesh is.
 
 |  |  |
 |----|----|
@@ -171,6 +173,67 @@ NIfTI-to-mesh conversion additionally require Python 3.9 or newer. With
 `reticulate >= 1.41`, ggbrat declares the required Python packages when
 those functions are first used. I tried to make everything all R, but
 after having banged my head against the wall for far too long I gave up.
+
+## Acknowledgements
+
+All atlases and resources in this package comes from the enormous work
+of the neuroimaging community. Source citation should be available for
+each resource and you can find them by browsing:
+
+``` r
+
+list_resources()
+```
+
+If you use any of them in your work, please cite the original sources.
+
+Available premade atlases can be found below. This will be updated as
+new atlases gets added, but I encourage you to crate your own 2D
+rendering instead!
+
+| Name | Source |
+|:---|:---|
+| AICHA_subcortex | Joliot M, Jobard G, Naveau M, et al. (2015) |
+| aparc | Desikan RS, Segonne F, Fischl B, et al. (2006) |
+| aparc.a2005s | Fischl B, van der Kouwe A, Destrieux C, et al. (2004) |
+| aparc.a2009s | Destrieux C, Fischl B, Dale A, Halgren E (2010) |
+| aseg_subcortex | Fischl B, Salat DH, Busa E, et al. (2002) |
+| Brainnetome_subcortex | Fan L, Li H, Zhuo J, et al. (2016) |
+| Brainstem_Navigator | Bianciardi M and the Brainstem Imaging Laboratory (2024) |
+| CIT168_subcortex | Pauli WM, Nili AN, Tyszka JM (2018) |
+| HCP-MMP1 | Glasser MF, Coalson TS, Robinson EC, et al. (2016) |
+| HO_FSSpace | Harvard Center for Morphometric Analysis and FMRIB Software Library. RRID:SCR_001476. |
+| Melbourne_S1 | Tian Y, Margulies DS, Breakspear M, Zalesky A (2020) |
+| Melbourne_S2 | Tian Y, Margulies DS, Breakspear M, Zalesky A (2020) |
+| Melbourne_S3 | Tian Y, Margulies DS, Breakspear M, Zalesky A (2020) |
+| Melbourne_S4 | Tian Y, Margulies DS, Breakspear M, Zalesky A (2020) |
+| PALS_B12_Brodmann | Van Essen DC (2005) |
+| PALS_B12_Lobes | Van Essen DC (2005) |
+| Schaefer2018_1000Parcels_17Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_1000Parcels_7Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_100Parcels_17Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_100Parcels_7Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_200Parcels_17Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_200Parcels_7Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_300Parcels_17Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_300Parcels_7Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_400Parcels_17Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_400Parcels_7Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_500Parcels_17Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_500Parcels_7Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_600Parcels_17Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_600Parcels_7Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_700Parcels_17Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_700Parcels_7Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_800Parcels_17Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_800Parcels_7Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_900Parcels_17Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| Schaefer2018_900Parcels_7Networks_order | Schaefer A, Kong R, Gordon EM, et al. (2018) |
+| SUIT_cerebellar_lobule | Diedrichsen J, Balsters JH, Flavell J, Cussans E, Ramnani N (2009) |
+| Thalamus_HCP | Najdenovska E, Aleman-Gomez Y, Battistella G, et al. (2018) |
+| Thalamus_THOMAS | Su JH, Thomas FT, Kasoff WS, et al. (2019) |
+| Yeo2011_17Networks_N1000 | Yeo BTT, Krienen FM, Sepulcre J, et al. (2011) |
+| Yeo2011_7Networks_N1000 | Yeo BTT, Krienen FM, Sepulcre J, et al. (2011) |
 
 # Package index
 

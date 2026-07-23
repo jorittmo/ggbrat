@@ -35,4 +35,5 @@ list_resources(
 
 ## Value
 
-A resource catalog data frame.
+A resource catalog data frame. The `citation` column gives the
+recommended source citation for each resource.

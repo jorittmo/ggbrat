@@ -6,13 +6,12 @@
 
 ## Citation
 
-Rittmo J (2026). *ggbrat: Build 2D Brain Atlases from Surface Meshes*. R
-package version 0.1.0, <https://jorittmo.github.io/ggbrat/>.
+Rittmo J (2026). *ggbrat: Brain Atlases for ggplot2*.
+<https://github.com/jorittmo/ggbrat>.
 
     @Manual{,
-      title = {ggbrat: Build 2D Brain Atlases from Surface Meshes},
+      title = {ggbrat: Brain Atlases for ggplot2},
       author = {Jonathan Rittmo},
       year = {2026},
-      note = {R package version 0.1.0},
-      url = {https://jorittmo.github.io/ggbrat/},
+      url = {https://github.com/jorittmo/ggbrat},
     }

@@ -98,10 +98,14 @@ resources:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_resources.html">list_resources</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/list_resources.html">list_resources</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"atlas"</span><span class="op">)</span></span></code></pre></div>
+<p>The returned <code>citation</code> column gives the recommended
+source citation for every resource. Derived forms of the same atlas—such
+as its annotation, mesh, and premade ggbrat RDS—share the citation of
+the atlas from which they were made.</p>
 <blockquote>
-<p>[!NOTE] All of the resources provided by ggbrat are available online,
-and their provenance, license and correct citation will be included.
-This is however work still being done.</p>
+<p>[!NOTE] Provenance and licensing metadata are still being audited for
+the resource catalog. Check the original source before redistributing a
+resource.</p>
 </blockquote>
 <p>Use <code><a href="../reference/resource_info.html">resource_info()</a></code> when you want metadata for a
 particular item:</p>

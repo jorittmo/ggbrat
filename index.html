@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Build 2D Brain Atlases from Surface Meshes • ggbrat</title>
+<title>Brain Atlases for ggplot2 • ggbrat</title>
 <script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Build 2D Brain Atlases from Surface Meshes">
-<meta name="description" content="Tools for deriving 2D atlas geometries from different types of brain surfaces, meshes and annotations preparing them for ggplot-style plotting.">
-<meta property="og:description" content="Tools for deriving 2D atlas geometries from different types of brain surfaces, meshes and annotations preparing them for ggplot-style plotting.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Brain Atlases for ggplot2">
+<meta name="description" content="Tools for deriving 2D atlas geometries from different types of brain surfaces, meshes, volumes and annotations preparing them for ggplot-style plotting.">
+<meta property="og:description" content="Tools for deriving 2D atlas geometries from different types of brain surfaces, meshes, volumes and annotations preparing them for ggplot-style plotting.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -70,12 +70,12 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="ggbrat">ggbrat<a class="anchor" aria-label="anchor" href="#ggbrat"></a>
+<div class="page-header"><h1 id="ggbrat-brain-atlases-for-ggplot2">ggbrat: Brain Atlases for ggplot2!<a class="anchor" aria-label="anchor" href="#ggbrat-brain-atlases-for-ggplot2"></a>
 </h1></div>
 <!-- badges: start -->
 
 <p>Do you use ggplot to visualize imaging data on brain atlases? Welcome to ggbrat: brain atlases for ggplot2!</p>
-<p>There is, of course, already the wonderful and popular <a href="https://ggseg.github.io/ggseg/" class="external-link"><code>ggseg</code></a> package for this particular purpose, but ggbrat offers something slightly different. While <code>ggseg</code> provides prebuilt atlases and modified <code>geoms</code>, the focus of ggbrat is to provide tools for building the 2D atlases themselves (although it also comes with many prebuilt atlases). ggbrat builds two-dimensional brain atlases that work directly with <a href="https://ggplot2.tidyverse.org/" class="external-link"><code>ggplot2</code></a> and <a href="https://r-spatial.github.io/sf/" class="external-link"><code>sf</code></a>. It can turn cortical annotations, labelled (subcortical) surface meshes, volumetric NIfTI atlases, and labelled SVG drawings into plot-ready <code>sf</code> geometry, from whatever view angle you want. No more PNG snapshots and outlining; it is all automatic!</p>
+<p>There is, of course, already the wonderful and popular <a href="https://ggseg.github.io/ggseg/" class="external-link"><code>ggseg</code></a> package for this particular purpose (and <a href="https://github.com/anniegbryant/subcortex_visualization" class="external-link"><code>subcortex_visualization</code></a> for subcortex), but ggbrat offers something slightly different. While <code>ggseg</code> provides prebuilt atlases and modified <code>geoms</code>, the focus of ggbrat is to provide tools for building the 2D atlases themselves (although it also comes with many prebuilt atlases). ggbrat builds two-dimensional brain atlases that work directly with <a href="https://ggplot2.tidyverse.org/" class="external-link"><code>ggplot2</code></a> and <a href="https://r-spatial.github.io/sf/" class="external-link"><code>sf</code></a>. It can turn cortical annotations, labelled (subcortical) surface meshes, volumetric NIfTI atlases, and labelled SVG drawings into plot-ready <code>sf</code> geometry, from whatever view angle you want. No more PNG snapshots and outlining; it is all automatic!</p>
 <p>The origin of this package stemmed from me wanting to visualize my brain data using ggplot with a bit more cortical texture (I mean the brain looks cool, no?). And since I really don’t like doing things manually, and because the brain is cool from many different angles, I developed an interactive view selector that can derive 3D looking 2D atlases from any camera angle in just a few seconds.</p>
 <p>Example surfaces/textures (plotted only using <code>ggplot</code>):</p>
 <p><img src="reference/figures/surface_strutctures.png"></p>
@@ -95,7 +95,7 @@
 </td>
 </tr></table>
 <p><img src="reference/figures/view_points2.png"></p>
-<p>The package supports many atlases and file types. As long as you have a surface with corresponding labels (FreeSurfer, GIFTI, or <code>.vtp</code> meshes), you can kind of build from whatever you want. For example, here is a surface rendering of the medial temporal lobe (shout out to @pyushkevich). The shading and region boundaries will, however, be better the more detailed the mesh is.</p>
+<p>The package supports many atlases and file types. As long as you have a surface (or volume) with corresponding labels (FreeSurfer, GIFTI, or <code>.vtp</code> meshes), you can kind of build from whatever you want. For example, here is a surface rendering of the medial temporal lobe (shout out to @pyushkevich). The shading and region boundaries will, however, be better the more detailed the mesh is.</p>
 <table class="table"><tr>
 <td>
 <img src="reference/figures/mtl_selection.png" width="400" alt="Medial temporal lobe surface in the interactive view selector">
@@ -158,6 +158,191 @@
 <li><a href="reference/index.html">Function reference</a></li>
 </ul>
 <p>Plotting premade atlases, downloading resources, and using the volumetric and SVG functionality require R only. Surface projection and NIfTI-to-mesh conversion additionally require Python 3.9 or newer. With <code>reticulate &gt;= 1.41</code>, ggbrat declares the required Python packages when those functions are first used. I tried to make everything all R, but after having banged my head against the wall for far too long I gave up.</p>
+</div>
+<div class="section level2">
+<h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
+</h2>
+<p>All atlases and resources in this package comes from the enormous work of the neuroimaging community. Source citation should be available for each resource and you can find them by browsing:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/list_resources.html">list_resources</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>If you use any of them in your work, please cite the original sources.</p>
+<p>Available premade atlases can be found below. This will be updated as new atlases gets added, but I encourage you to crate your own 2D rendering instead!</p>
+<table class="table">
+<colgroup>
+<col width="24%">
+<col width="75%">
+</colgroup>
+<thead><tr>
+<th align="left">Name</th>
+<th align="left">Source</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left">AICHA_subcortex</td>
+<td align="left">Joliot M, Jobard G, Naveau M, et al. (2015)</td>
+</tr>
+<tr>
+<td align="left">aparc</td>
+<td align="left">Desikan RS, Segonne F, Fischl B, et al. (2006)</td>
+</tr>
+<tr>
+<td align="left">aparc.a2005s</td>
+<td align="left">Fischl B, van der Kouwe A, Destrieux C, et al. (2004)</td>
+</tr>
+<tr>
+<td align="left">aparc.a2009s</td>
+<td align="left">Destrieux C, Fischl B, Dale A, Halgren E (2010)</td>
+</tr>
+<tr>
+<td align="left">aseg_subcortex</td>
+<td align="left">Fischl B, Salat DH, Busa E, et al. (2002)</td>
+</tr>
+<tr>
+<td align="left">Brainnetome_subcortex</td>
+<td align="left">Fan L, Li H, Zhuo J, et al. (2016)</td>
+</tr>
+<tr>
+<td align="left">Brainstem_Navigator</td>
+<td align="left">Bianciardi M and the Brainstem Imaging Laboratory (2024)</td>
+</tr>
+<tr>
+<td align="left">CIT168_subcortex</td>
+<td align="left">Pauli WM, Nili AN, Tyszka JM (2018)</td>
+</tr>
+<tr>
+<td align="left">HCP-MMP1</td>
+<td align="left">Glasser MF, Coalson TS, Robinson EC, et al. (2016)</td>
+</tr>
+<tr>
+<td align="left">HO_FSSpace</td>
+<td align="left">Harvard Center for Morphometric Analysis and FMRIB Software Library. RRID:SCR_001476.</td>
+</tr>
+<tr>
+<td align="left">Melbourne_S1</td>
+<td align="left">Tian Y, Margulies DS, Breakspear M, Zalesky A (2020)</td>
+</tr>
+<tr>
+<td align="left">Melbourne_S2</td>
+<td align="left">Tian Y, Margulies DS, Breakspear M, Zalesky A (2020)</td>
+</tr>
+<tr>
+<td align="left">Melbourne_S3</td>
+<td align="left">Tian Y, Margulies DS, Breakspear M, Zalesky A (2020)</td>
+</tr>
+<tr>
+<td align="left">Melbourne_S4</td>
+<td align="left">Tian Y, Margulies DS, Breakspear M, Zalesky A (2020)</td>
+</tr>
+<tr>
+<td align="left">PALS_B12_Brodmann</td>
+<td align="left">Van Essen DC (2005)</td>
+</tr>
+<tr>
+<td align="left">PALS_B12_Lobes</td>
+<td align="left">Van Essen DC (2005)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_1000Parcels_17Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_1000Parcels_7Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_100Parcels_17Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_100Parcels_7Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_200Parcels_17Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_200Parcels_7Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_300Parcels_17Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_300Parcels_7Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_400Parcels_17Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_400Parcels_7Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_500Parcels_17Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_500Parcels_7Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_600Parcels_17Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_600Parcels_7Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_700Parcels_17Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_700Parcels_7Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_800Parcels_17Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_800Parcels_7Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_900Parcels_17Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Schaefer2018_900Parcels_7Networks_order</td>
+<td align="left">Schaefer A, Kong R, Gordon EM, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">SUIT_cerebellar_lobule</td>
+<td align="left">Diedrichsen J, Balsters JH, Flavell J, Cussans E, Ramnani N (2009)</td>
+</tr>
+<tr>
+<td align="left">Thalamus_HCP</td>
+<td align="left">Najdenovska E, Aleman-Gomez Y, Battistella G, et al. (2018)</td>
+</tr>
+<tr>
+<td align="left">Thalamus_THOMAS</td>
+<td align="left">Su JH, Thomas FT, Kasoff WS, et al. (2019)</td>
+</tr>
+<tr>
+<td align="left">Yeo2011_17Networks_N1000</td>
+<td align="left">Yeo BTT, Krienen FM, Sepulcre J, et al. (2011)</td>
+</tr>
+<tr>
+<td align="left">Yeo2011_7Networks_N1000</td>
+<td align="left">Yeo BTT, Krienen FM, Sepulcre J, et al. (2011)</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
