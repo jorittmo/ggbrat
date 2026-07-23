@@ -7,7 +7,11 @@
 remove_resource(name, type = NULL, cache_dir = ggbrat_cache_dir())
 }
 \arguments{
-\item{name}{Resource name, id, vector of names, or \code{"all"}.}
+\item{name}{Resource name, id, alias, partial name, vector of names, or
+\code{"all"}. Exact normalized names and ids take priority, followed by exact
+aliases. A unique partial match is selected automatically; multiple
+matches open a selection menu in interactive R and produce an informative
+error otherwise.}
 
 \item{type}{Optional category, required for \code{name = "all"}.}
 

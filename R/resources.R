@@ -236,6 +236,80 @@ resource_add_citations <- function(catalog) {
   catalog
 }
 
+resource_aliases <- function(name) {
+  aliases <- rep("", length(name))
+
+  set_aliases <- function(pattern, value) {
+    matches <- !nzchar(aliases) & grepl(pattern, name, ignore.case = TRUE)
+    aliases[matches] <<- value
+  }
+
+  set_aliases("^aparc$", "desikan-killiany;desikan killiany;desikan;dk")
+  set_aliases("^aparc\\.a2005s$", "destrieux2005;destrieux 2005")
+  set_aliases(
+    "^aparc\\.a2009s$",
+    "destrieux;destrieux2009;destrieux 2009"
+  )
+  set_aliases("^HCP-MMP1$", "glasser;glasser360;glasser 360;mmp1;hcp mmp")
+  set_aliases(
+    "^HO_FSSpace$",
+    "harvard-oxford;harvard oxford;harvard oxford cortical;ho cortical"
+  )
+  set_aliases("^PALS_B12_Brodmann$", "pals brodmann;pals-b12 brodmann")
+  set_aliases("^PALS_B12_Lobes$", "pals lobes;pals-b12 lobes")
+  set_aliases(
+    "^Yeo2011_7Networks_N1000$",
+    "yeo7;yeo 7;yeo-7;yeo 7 networks"
+  )
+  set_aliases(
+    "^Yeo2011_17Networks_N1000$",
+    "yeo17;yeo 17;yeo-17;yeo 17 networks"
+  )
+  set_aliases("^AICHA_subcortex$", "aicha")
+  set_aliases("^aseg_subcortex$", "aseg;freesurfer aseg")
+  set_aliases("^Brainstem_Navigator", "brainstem navigator;brainstemnavig")
+  set_aliases("^CIT168_subcortex$", "cit168;pauli atlas;pauli")
+  set_aliases("^Melbourne_S1$", "melbourne scale 1;tian s1;tian scale 1")
+  set_aliases("^Melbourne_S2$", "melbourne scale 2;tian s2;tian scale 2")
+  set_aliases("^Melbourne_S3$", "melbourne scale 3;tian s3;tian scale 3")
+  set_aliases("^Melbourne_S4$", "melbourne scale 4;tian s4;tian scale 4")
+  set_aliases("^SUIT_cerebellar_lobule$", "suit;suit lobules;cerebellar lobules")
+  set_aliases("^Thalamus_HCP$", "hcp thalamus;hcp thalamic nuclei")
+  set_aliases("^Thalamus_THOMAS$", "thomas;thomas thalamus")
+  set_aliases("^fsaverage_inflated$", "inflated;fsaverage inflated")
+  set_aliases("^fsaverage_pial$", "pial;fsaverage pial")
+  set_aliases("^fsaverage_white$", "white;fsaverage white")
+  set_aliases("^fsaverage_orig$", "orig;fsaverage orig")
+  set_aliases("^fsaverage_sulc$", "sulc;fsaverage sulc")
+  set_aliases("^fsaverage_curv$", "curv;fsaverage curv")
+  set_aliases(
+    "^tpl-MNI152NLin2009cAsym_res-01_label-GM_probseg$",
+    "mni gray matter;mni gm;gray matter probability map;gm probability map"
+  )
+
+  aliases
+}
+
+resource_add_aliases <- function(catalog) {
+  inferred <- resource_aliases(catalog$name)
+  if (!"aliases" %in% names(catalog)) {
+    catalog$aliases <- inferred
+  } else {
+    missing <- is.na(catalog$aliases) | !nzchar(trimws(catalog$aliases))
+    catalog$aliases[missing] <- inferred[missing]
+  }
+  catalog$aliases[is.na(catalog$aliases)] <- ""
+  catalog
+}
+
+resource_alias_list <- function(x) {
+  lapply(x, function(value) {
+    if (is.na(value) || !nzchar(trimws(value))) return(character())
+    aliases <- trimws(strsplit(value, ";", fixed = TRUE)[[1L]])
+    unique(aliases[nzchar(aliases)])
+  })
+}
+
 #' Inspect the ggbrat resource catalog
 #'
 #' The package ships with a catalog snapshot. Set `refresh = TRUE` to read the
@@ -245,8 +319,8 @@ resource_add_citations <- function(catalog) {
 #' @param quiet Whether to suppress download progress.
 #'
 #' @return A data frame containing one row per resource, including its
-#'   recommended source `citation`. The associated file table is stored in the
-#'   `files` attribute.
+#'   recommended source `citation` and semicolon-separated `aliases`. The
+#'   associated file table is stored in the `files` attribute.
 #' @export
 resource_catalog <- function(refresh = FALSE, quiet = FALSE) {
   if (!is.logical(refresh) || length(refresh) != 1L || is.na(refresh)) {
@@ -278,6 +352,7 @@ resource_catalog <- function(refresh = FALSE, quiet = FALSE) {
   }
 
   catalog <- resource_add_citations(catalog)
+  catalog <- resource_add_aliases(catalog)
   required <- c("id", "name", "type", "release_tag", "asset", "url", "md5")
   if (!all(required %in% names(catalog)) ||
       !all(c("resource_id", "role", "path", "md5") %in% names(files))) {
@@ -298,7 +373,8 @@ resource_catalog <- function(refresh = FALSE, quiet = FALSE) {
 #' @param cache_dir Resource cache directory.
 #'
 #' @return A resource catalog data frame. The `citation` column gives the
-#'   recommended source citation for each resource.
+#'   recommended source citation and `aliases` gives semicolon-separated
+#'   alternative names for each resource.
 #' @export
 list_resources <- function(type = NULL, installed = NULL, refresh = FALSE,
                            cache_dir = ggbrat_cache_dir()) {
@@ -339,6 +415,29 @@ ggbrat_generated_dir <- function(type, create = TRUE) {
   normalizePath(path, mustWork = FALSE)
 }
 
+resource_resolve_ambiguous <- function(candidates, query) {
+  choices <- paste0(
+    candidates$name, " [", candidates$type, "; ", candidates$id, "]"
+  )
+  if (!interactive()) {
+    stop(
+      "Multiple ggbrat resources match `", query, "`:\n- ",
+      paste(choices, collapse = "\n- "),
+      "\nPlease provide a more specific name.",
+      call. = FALSE
+    )
+  }
+
+  selection <- utils::menu(
+    choices,
+    title = paste0("Multiple resources match `", query, "`. Select one:")
+  )
+  if (!length(selection) || selection == 0L) {
+    stop("Resource selection cancelled.", call. = FALSE)
+  }
+  candidates[selection, , drop = FALSE]
+}
+
 resource_select <- function(name, type, catalog) {
   if (!is.character(name) || !length(name) || anyNA(name) || any(!nzchar(name))) {
     stop("`name` must contain one or more resource names, or `\"all\"`.", call. = FALSE)
@@ -356,23 +455,70 @@ resource_select <- function(name, type, catalog) {
   selected <- vector("list", length(name))
   for (index in seq_along(name)) {
     normalized <- resource_normalize_name(name[[index]])
-    matches <- catalog$id == name[[index]] |
+    if (!nzchar(normalized)) {
+      stop(
+        "Resource names must contain at least one letter or number.",
+        call. = FALSE
+      )
+    }
+    alias_column <- if ("aliases" %in% names(catalog)) {
+      catalog$aliases
+    } else {
+      rep("", nrow(catalog))
+    }
+    alias_values <- resource_alias_list(alias_column)
+    normalized_aliases <- lapply(alias_values, resource_normalize_name)
+    exact_name_matches <- catalog$id == name[[index]] |
       resource_normalize_name(catalog$id) == normalized |
       resource_normalize_name(catalog$name) == normalized
-    if (!any(matches)) {
+    exact_alias_matches <- vapply(
+      normalized_aliases,
+      function(aliases) normalized %in% aliases,
+      logical(1)
+    )
+    if (any(exact_name_matches)) {
+      candidates <- catalog[exact_name_matches, , drop = FALSE]
+    } else if (any(exact_alias_matches)) {
+      candidates <- catalog[exact_alias_matches, , drop = FALSE]
+    } else {
+      normalized_ids <- resource_normalize_name(catalog$id)
+      normalized_names <- resource_normalize_name(catalog$name)
+      partial_matches <- grepl(normalized, normalized_ids, fixed = TRUE) |
+        grepl(normalized, normalized_names, fixed = TRUE)
+      if (nchar(normalized) >= 3L) {
+        partial_alias_matches <- vapply(
+          normalized_aliases,
+          function(aliases) {
+            any(vapply(
+              aliases,
+              function(alias) grepl(normalized, alias, fixed = TRUE),
+              logical(1)
+            ))
+          },
+          logical(1)
+        )
+        partial_matches <- partial_matches | partial_alias_matches
+      }
+      candidates <- catalog[partial_matches, , drop = FALSE]
+    }
+    if (!nrow(candidates)) {
       stop("Unknown ggbrat resource: ", name[[index]], call. = FALSE)
     }
-    if (sum(matches) > 1L) {
-      stop("Resource name is ambiguous: ", name[[index]], ". Supply `type` or its full id.", call. = FALSE)
+    if (nrow(candidates) > 1L) {
+      candidates <- resource_resolve_ambiguous(candidates, name[[index]])
     }
-    selected[[index]] <- catalog[matches, , drop = FALSE]
+    selected[[index]] <- candidates
   }
   do.call(rbind, selected)
 }
 
 #' Show metadata for a ggbrat resource
 #'
-#' @param name Resource name, id, vector of names, or `"all"`.
+#' @param name Resource name, id, alias, partial name, vector of names, or
+#'   `"all"`. Exact normalized names and ids take priority, followed by exact
+#'   aliases. A unique partial match is selected automatically; multiple
+#'   matches open a selection menu in interactive R and produce an informative
+#'   error otherwise.
 #' @param type Optional resource category.
 #' @param refresh Whether to refresh the mutable remote catalog.
 #'
@@ -471,7 +617,11 @@ resource_download_one <- function(row, files, cache_dir, force, quiet) {
 
 #' Download one or more ggbrat resources
 #'
-#' @param name Resource name, id, vector of names, or `"all"`.
+#' @param name Resource name, id, alias, partial name, vector of names, or
+#'   `"all"`. Exact normalized names and ids take priority, followed by exact
+#'   aliases. A unique partial match is selected automatically; multiple
+#'   matches open a selection menu in interactive R and produce an informative
+#'   error otherwise.
 #' @param type Optional resource category. Required for `name = "all"`.
 #' @param force Whether to replace valid cached copies.
 #' @param refresh Whether to refresh the mutable remote catalog before resolving
@@ -596,7 +746,11 @@ download_volume_atlas <- function(name, force = FALSE, refresh = FALSE,
 }
 
 #' Remove resources from the ggbrat cache
-#' @param name Resource name, id, vector of names, or `"all"`.
+#' @param name Resource name, id, alias, partial name, vector of names, or
+#'   `"all"`. Exact normalized names and ids take priority, followed by exact
+#'   aliases. A unique partial match is selected automatically; multiple
+#'   matches open a selection menu in interactive R and produce an informative
+#'   error otherwise.
 #' @param type Optional category, required for `name = "all"`.
 #' @param cache_dir Resource cache directory.
 #' @return The removed paths, invisibly.

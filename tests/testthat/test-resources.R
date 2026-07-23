@@ -76,14 +76,88 @@ test_that("resource catalog resolves ids, aliases, and all categories", {
   })
 })
 
-test_that("bundled resources have source citations", {
+test_that("resource catalog resolves unique partial names", {
+  with_mock_resources({
+    catalog <- resource_catalog(refresh = TRUE, quiet = TRUE)
+    expect_equal(
+      resource_select("surfa", type = "surface", catalog = catalog)$id,
+      "surface-test"
+    )
+    expect_equal(
+      resource_select("annot", type = "annotation", catalog = catalog)$id,
+      "annotation-test"
+    )
+  })
+})
+
+test_that("ambiguous partial names list candidates non-interactively", {
+  with_mock_resources({
+    catalog <- resource_catalog(refresh = TRUE, quiet = TRUE)
+    error <- tryCatch(
+      resource_select("atlas", type = "atlas", catalog = catalog),
+      error = identity
+    )
+    message <- conditionMessage(error)
+    expect_match(message, "Multiple ggbrat resources match")
+    expect_match(message, "one [atlas; atlas-one]", fixed = TRUE)
+    expect_match(message, "two [atlas; atlas-two]", fixed = TRUE)
+    expect_match(message, "more specific")
+  })
+})
+
+test_that("exact resource matches take priority over partial matches", {
+  catalog <- data.frame(
+    id = c("atlas-yeo", "atlas-yeo-expanded"),
+    name = c("yeo", "yeo_expanded"),
+    type = c("atlas", "atlas"),
+    stringsAsFactors = FALSE
+  )
+  expect_equal(resource_select("yeo", "atlas", catalog)$id, "atlas-yeo")
+})
+
+test_that("resource aliases resolve common atlas names", {
+  catalog <- data.frame(
+    id = paste0("atlas-", c("aparc", "aparc-a2009s", "hcp-mmp1")),
+    name = c("aparc", "aparc.a2009s", "HCP-MMP1"),
+    type = "atlas",
+    aliases = resource_aliases(c("aparc", "aparc.a2009s", "HCP-MMP1")),
+    stringsAsFactors = FALSE
+  )
+
+  expect_equal(resource_select("dk", "atlas", catalog)$name, "aparc")
+  expect_equal(
+    resource_select("destrieux", "atlas", catalog)$name,
+    "aparc.a2009s"
+  )
+  expect_equal(resource_select("glasser", "atlas", catalog)$name, "HCP-MMP1")
+})
+
+test_that("short aliases require an exact match", {
+  catalog <- data.frame(
+    id = "atlas-aparc",
+    name = "aparc",
+    type = "atlas",
+    aliases = resource_aliases("aparc"),
+    stringsAsFactors = FALSE
+  )
+
+  expect_equal(resource_select("dk", "atlas", catalog)$name, "aparc")
+  expect_error(resource_select("d", "atlas", catalog), "Unknown ggbrat resource")
+})
+
+test_that("bundled resources have source citations and aliases", {
   if (exists("catalog", envir = .ggbrat_resource_state, inherits = FALSE)) {
     rm("catalog", envir = .ggbrat_resource_state)
   }
   catalog <- resource_catalog()
   expect_true("citation" %in% names(catalog))
+  expect_true("aliases" %in% names(catalog))
   expect_false(anyNA(catalog$citation))
   expect_true(all(nzchar(catalog$citation)))
+  expect_match(
+    catalog$aliases[catalog$name == "HCP-MMP1"][1L],
+    "glasser"
+  )
   expect_match(
     catalog$citation[catalog$name == "Yeo2011_7Networks_N1000"][1L],
     "Yeo BTT"

@@ -24,7 +24,8 @@ list_resources(
 }
 \value{
 A resource catalog data frame. The \code{citation} column gives the
-recommended source citation for each resource.
+recommended source citation and \code{aliases} gives semicolon-separated
+alternative names for each resource.
 }
 \description{
 List downloadable ggbrat resources

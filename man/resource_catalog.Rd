@@ -13,8 +13,8 @@ resource_catalog(refresh = FALSE, quiet = FALSE)
 }
 \value{
 A data frame containing one row per resource, including its
-recommended source \code{citation}. The associated file table is stored in the
-\code{files} attribute.
+recommended source \code{citation} and semicolon-separated \code{aliases}. The
+associated file table is stored in the \code{files} attribute.
 }
 \description{
 The package ships with a catalog snapshot. Set \code{refresh = TRUE} to read the

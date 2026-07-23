@@ -73,7 +73,7 @@ schaefer <- reposition_atlas(schaefer, layout = "AB.\n.CD")
 
 The `horizontal_gap` and `vertical_gap` arguments control the space between
 panel bounding boxes. Inspect `attr(schaefer, "layout_key")` to see which
-view—and, where applicable, hemisphere—was assigned to each letter.
+view and hemisphere was assigned to each letter.
 
 ## Resize a complete atlas
 

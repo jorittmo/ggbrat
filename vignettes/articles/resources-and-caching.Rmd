@@ -27,8 +27,9 @@ list_resources(type = "atlas")
 ```
 
 The returned `citation` column gives the recommended source citation for every
-resource. Derived forms of the same atlas—such as its annotation, mesh, and
-premade ggbrat RDS—share the citation of the atlas from which they were made.
+resource. The `aliases` column contains familiar alternative names. Derived
+forms of the same atlas—such as its annotation, mesh, and premade ggbrat
+RDS—share the citation of the atlas from which they were made.
 
 > [!NOTE]
 > Provenance and licensing metadata are still being audited for the resource
@@ -39,6 +40,35 @@ Use `resource_info()` when you want metadata for a particular item:
 ```{r}
 resource_info("Melbourne_S1")
 ```
+
+Resource names can be abbreviated when the partial match is unambiguous:
+
+```{r}
+download_surface("inflated")
+resource_info("melbourne_s1")
+```
+
+Common alternative names are also understood:
+
+```{r}
+load_atlas("glasser")   # HCP-MMP1
+load_atlas("dk")        # aparc / Desikan-Killiany
+load_atlas("destrieux") # aparc.a2009s
+```
+
+Aliases are matched exactly before fuzzy partial matching. Very short aliases,
+such as `"dk"`, only participate in exact matching so that short searches do not
+produce a pile of accidental matches.
+
+When several resources match in an interactive R session, ggbrat displays a
+numbered menu:
+
+```{r}
+load_atlas("yeo")
+```
+
+In scripts, package checks, and CI, ambiguous matching stops and lists the
+candidates instead of waiting for input or silently choosing one.
 
 ## Premade atlases
 
