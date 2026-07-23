@@ -108,18 +108,18 @@ test_that("glass cortex requires paired meshes", {
 })
 
 test_that("atlas polygon and cortex preview controls are validated", {
-  expect_error(build_brain_atlas(create_polygons = NA), "TRUE or FALSE")
+  expect_error(build_atlas_surf(create_polygons = NA), "TRUE or FALSE")
   expect_error(brain_views(keep_z_coord = NA), "keep_z_coord")
   expect_message(
-    tryCatch(build_brain_atlas(keep_z_coord = TRUE), error = function(error) NULL),
+    tryCatch(build_atlas_surf(keep_z_coord = TRUE), error = function(error) NULL),
     "region polygons use X and Y only"
   )
-  expect_equal(formals(build_brain_atlas)$create_polygons, TRUE)
-  expect_equal(formals(build_brain_atlas)$keep_z_coord, FALSE)
+  expect_equal(formals(build_atlas_surf)$create_polygons, TRUE)
+  expect_equal(formals(build_atlas_surf)$keep_z_coord, FALSE)
   expect_equal(formals(brain_views)$keep_z_coord, FALSE)
   expect_equal(formals(brain_views)$cortex_preview_opacity, 0.1)
   expect_null(formals(brain_views)$surf_dir)
-  expect_null(formals(build_brain_atlas)$surf_dir)
+  expect_null(formals(build_atlas_surf)$surf_dir)
 })
 
 test_that("alpha hull failures preserve one geometry per atlas row", {

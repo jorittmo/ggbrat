@@ -12,7 +12,7 @@ compact_subcortical_layout(
 )
 }
 \arguments{
-\item{x}{An \code{sf} atlas or a list returned by \code{\link[=build_brain_atlas]{build_brain_atlas()}}.}
+\item{x}{An \code{sf} atlas or a list returned by \code{\link[=build_atlas_surf]{build_atlas_surf()}}.}
 
 \item{horizontal_gap}{Horizontal gap between hemisphere groups.}
 

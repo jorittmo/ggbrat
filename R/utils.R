@@ -67,7 +67,7 @@ smooth_polygons <- function(x, method = "ksmooth", smoothness = 3) {
 #' are unchanged. This is useful when the cortex is omitted and cortex-sized
 #' grid spacing leaves excessive empty space between subcortical structures.
 #'
-#' @param x An `sf` atlas or a list returned by [build_brain_atlas()].
+#' @param x An `sf` atlas or a list returned by [build_atlas_surf()].
 #' @param horizontal_gap Horizontal gap between hemisphere groups.
 #' @param vertical_gap Vertical gap between view rows.
 #' @param drop_cortex When `TRUE`, remove `cortex` and `cortex_silhouette` from
@@ -199,4 +199,3 @@ compact_subcortical_layout <- function(
   }
   x
 }
-

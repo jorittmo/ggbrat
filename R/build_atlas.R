@@ -28,14 +28,14 @@
 #' @examples
 #' \dontrun{
 #' melbourne_mesh <- download_surface("Melbourne_S1", type = "subcortical")
-#' subcortical_atlas <- build_brain_atlas(
+#' subcortical_atlas <- build_atlas_surf(
 #'   mesh_path = melbourne_mesh,
 #'   add_cortex = TRUE,
 #'   n_cols = 2
 #' )
 #' }
 #' @export
-build_brain_atlas <- function(
+build_atlas_surf <- function(
   annot_path = NULL,
   hemi = c("both", "left", "right"),
   n_views = NULL,

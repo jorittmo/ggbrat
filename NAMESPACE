@@ -1,7 +1,7 @@
 export(ashape_polygon_sf)
 export(auto_alpha)
 export(build_atlas_svg)
-export(build_brain_atlas)
+export(build_atlas_surf)
 export(build_atlas_vol)
 export(brain_views)
 export(capture_brain_view_presets)
