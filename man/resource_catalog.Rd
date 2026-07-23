@@ -12,8 +12,9 @@ resource_catalog(refresh = FALSE, quiet = FALSE)
 \item{quiet}{Whether to suppress download progress.}
 }
 \value{
-A data frame containing one row per resource. The associated file
-table is stored in the \code{files} attribute.
+A data frame containing one row per resource, including its
+recommended source \code{citation}. The associated file table is stored in the
+\code{files} attribute.
 }
 \description{
 The package ships with a catalog snapshot. Set \code{refresh = TRUE} to read the

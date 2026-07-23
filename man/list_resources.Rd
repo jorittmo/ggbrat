@@ -23,7 +23,8 @@ list_resources(
 \item{cache_dir}{Resource cache directory.}
 }
 \value{
-A resource catalog data frame.
+A resource catalog data frame. The \code{citation} column gives the
+recommended source citation for each resource.
 }
 \description{
 List downloadable ggbrat resources
