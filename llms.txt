@@ -258,6 +258,10 @@ just use
   : Capture camera presets for later atlas builds
 - [`shift_brain_views()`](https://jorittmo.github.io/ggbrat/reference/shift_brain_views.md)
   : Shift atlas views into a plotting grid
+- [`reposition_atlas()`](https://jorittmo.github.io/ggbrat/reference/reposition_atlas.md)
+  : Reposition atlas panels with a text-based layout
+- [`atlas_size()`](https://jorittmo.github.io/ggbrat/reference/atlas_size.md)
+  : Scale an entire atlas
 - [`compact_subcortical_layout()`](https://jorittmo.github.io/ggbrat/reference/compact_subcortical_layout.md)
   : Compact a subcortical atlas layout
 - [`shrink_polygons()`](https://jorittmo.github.io/ggbrat/reference/shrink_polygons.md)

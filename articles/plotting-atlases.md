@@ -57,6 +57,68 @@ Note that the multipoints are relatively computationally expensive to
 plot, so if you just want to quickly visualize something it is better to
 turn that layer off until you want to render the proper figure.
 
+## Reposition the views
+
+[`reposition_atlas()`](https://jorittmo.github.io/ggbrat/reference/reposition_atlas.md)
+infers the plotted panels in the order they first appear in the data and
+assigns them `A`, `B`, `C`, and so on. For surface atlases, each
+view/hemisphere combination is a panel. Volumetric atlases simply use
+their distinct `view` values.
+
+``` r
+
+# Put the first four panels on one line.
+schaefer <- reposition_atlas(schaefer, layout = "ABCD")
+
+# Or arrange the same panels in a two-by-two grid.
+schaefer <- reposition_atlas(schaefer, layout = "AB\nCD")
+```
+
+The same translations are applied to the atlas, shade, silhouette, and
+glass-cortex layers. Use `.`, `#`, or a literal space for an empty grid
+cell:
+
+``` r
+
+schaefer <- reposition_atlas(schaefer, layout = "AB.\n.CD")
+```
+
+The `horizontal_gap` and `vertical_gap` arguments control the space
+between panel bounding boxes. Inspect `attr(schaefer, "layout_key")` to
+see which view—and, where applicable, hemisphere—was assigned to each
+letter.
+
+## Resize a complete atlas
+
+When combining atlases that occupy different coordinate ranges you can
+scale one of them as a complete object to get make sure they are
+comparable in size.
+
+[`atlas_size()`](https://jorittmo.github.io/ggbrat/reference/atlas_size.md)
+scales the entire layout around its centre, including the distances
+between views. It applies the same transformation to all spatial layers
+in the atlas object, so polygons, shading, silhouettes, and glass-cortex
+points remain aligned. Values above one enlarge the atlas; values
+between zero and one shrink it.
+
+``` r
+
+
+schaefer <- load_atlas("Schaefer2018_1000Parcels_7Networks_order")
+yeo <- load_atlas("Yeo2011_7Networks_N1000")
+suit <- load_atlas("SUIT_cerebellar_lobule")
+
+schaefer$atlas |> reposition_atlas(layout = "BACD") |> 
+  rbind(aseg_comp$atlas |> atlas_size(2.5) |> reposition_atlas(layout = "####\nCABD", horizontal_gap = 0.2))  |> 
+  rbind(suit$atlas |> atlas_size(2.5) |> reposition_atlas(layout = "####\n####\n#AB") ) |> 
+  ggplot()+
+  geom_sf(aes(fill = color), linewidth = 0.5, show.legend = FALSE) +
+  scale_fill_identity() +
+  theme_void()
+```
+
+![](figures/full_brain.png)
+
 ## Join the atlas with data
 
 The package includes the first five cortical gradients from Margulies et

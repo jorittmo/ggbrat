@@ -128,12 +128,62 @@ plot, so if you just want to quickly visualize something it is better to
 turn that layer off until you want to render the proper figure.</p>
 </div>
 <div class="section level2">
+<h2 id="reposition-the-views">Reposition the views<a class="anchor" aria-label="anchor" href="#reposition-the-views"></a>
+</h2>
+<p><code><a href="../reference/reposition_atlas.html">reposition_atlas()</a></code> infers the plotted panels in the
+order they first appear in the data and assigns them <code>A</code>,
+<code>B</code>, <code>C</code>, and so on. For surface atlases, each
+view/hemisphere combination is a panel. Volumetric atlases simply use
+their distinct <code>view</code> values.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Put the first four panels on one line.</span></span>
+<span><span class="va">schaefer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/reposition_atlas.html">reposition_atlas</a></span><span class="op">(</span><span class="va">schaefer</span>, layout <span class="op">=</span> <span class="st">"ABCD"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Or arrange the same panels in a two-by-two grid.</span></span>
+<span><span class="va">schaefer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/reposition_atlas.html">reposition_atlas</a></span><span class="op">(</span><span class="va">schaefer</span>, layout <span class="op">=</span> <span class="st">"AB\nCD"</span><span class="op">)</span></span></code></pre></div>
+<p>The same translations are applied to the atlas, shade, silhouette,
+and glass-cortex layers. Use <code>.</code>, <code>#</code>, or a
+literal space for an empty grid cell:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">schaefer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/reposition_atlas.html">reposition_atlas</a></span><span class="op">(</span><span class="va">schaefer</span>, layout <span class="op">=</span> <span class="st">"AB.\n.CD"</span><span class="op">)</span></span></code></pre></div>
+<p>The <code>horizontal_gap</code> and <code>vertical_gap</code>
+arguments control the space between panel bounding boxes. Inspect
+<code>attr(schaefer, "layout_key")</code> to see which view—and, where
+applicable, hemisphere—was assigned to each letter.</p>
+</div>
+<div class="section level2">
+<h2 id="resize-a-complete-atlas">Resize a complete atlas<a class="anchor" aria-label="anchor" href="#resize-a-complete-atlas"></a>
+</h2>
+<p>When combining atlases that occupy different coordinate ranges you
+can scale one of them as a complete object to get make sure they are
+comparable in size.</p>
+<p><code><a href="../reference/atlas_size.html">atlas_size()</a></code> scales the entire layout around its centre,
+including the distances between views. It applies the same
+transformation to all spatial layers in the atlas object, so polygons,
+shading, silhouettes, and glass-cortex points remain aligned. Values
+above one enlarge the atlas; values between zero and one shrink it.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">schaefer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_atlas.html">load_atlas</a></span><span class="op">(</span><span class="st">"Schaefer2018_1000Parcels_7Networks_order"</span><span class="op">)</span></span>
+<span><span class="va">yeo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_atlas.html">load_atlas</a></span><span class="op">(</span><span class="st">"Yeo2011_7Networks_N1000"</span><span class="op">)</span></span>
+<span><span class="va">suit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_atlas.html">load_atlas</a></span><span class="op">(</span><span class="st">"SUIT_cerebellar_lobule"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">schaefer</span><span class="op">$</span><span class="va">atlas</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/reposition_atlas.html">reposition_atlas</a></span><span class="op">(</span>layout <span class="op">=</span> <span class="st">"BACD"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">aseg_comp</span><span class="op">$</span><span class="va">atlas</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/atlas_size.html">atlas_size</a></span><span class="op">(</span><span class="fl">2.5</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/reposition_atlas.html">reposition_atlas</a></span><span class="op">(</span>layout <span class="op">=</span> <span class="st">"####\nCABD"</span>, horizontal_gap <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span>  <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">suit</span><span class="op">$</span><span class="va">atlas</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/atlas_size.html">atlas_size</a></span><span class="op">(</span><span class="fl">2.5</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/reposition_atlas.html">reposition_atlas</a></span><span class="op">(</span>layout <span class="op">=</span> <span class="st">"####\n####\n#AB"</span><span class="op">)</span> <span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">color</span><span class="op">)</span>, linewidth <span class="op">=</span> <span class="fl">0.5</span>, show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_identity.html" class="external-link">scale_fill_identity</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_void</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="figures/full_brain.png"></p>
+</div>
+<div class="section level2">
 <h2 id="join-the-atlas-with-data">Join the atlas with data<a class="anchor" aria-label="anchor" href="#join-the-atlas-with-data"></a>
 </h2>
 <p>The package includes the first five cortical gradients from Margulies
 et al. (2016), represented for the 1,000 parcels of the Schaefer atlas.
 We use them here as example data.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"gradients"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">schaefer</span><span class="op">$</span><span class="va">atlas</span> <span class="op">|&gt;</span></span>
@@ -154,7 +204,7 @@ networks. Since the polygons boundaries sit tightly we shrink and smooth
 them a little bit to get a nicer looking overlay using the helper
 functions <code><a href="../reference/shrink_polygons.html">shrink_polygons()</a></code> and
 <code><a href="../reference/smooth_polygons.html">smooth_polygons()</a></code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">yeo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_atlas.html">load_atlas</a></span><span class="op">(</span><span class="st">"Yeo2011_7Networks_N1000"</span><span class="op">)</span></span>
 <span><span class="va">yeo</span><span class="op">$</span><span class="va">atlas</span> <span class="op">&lt;-</span> <span class="va">yeo</span><span class="op">$</span><span class="va">atlas</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/shrink_polygons.html">shrink_polygons</a></span><span class="op">(</span>dist <span class="op">=</span> <span class="fl">0.007</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -182,7 +232,7 @@ aesthetic thing and likely not as useful from a scientific point of
 view, but I think it’s pretty cool. It makes a purely pial surface
 actually look quite okay in 2D. You can generate such atlases by setting
 <code>create_polygons</code> to <code>FALSE</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">schaefer1k</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/download_annotation.html">download_annotation</a></span><span class="op">(</span></span>
 <span>  <span class="st">"annotation-schaefer2018-1000parcels-7networks-order"</span></span>
 <span><span class="op">)</span></span>

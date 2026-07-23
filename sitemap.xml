@@ -12,6 +12,7 @@
 <url><loc>https://jorittmo.github.io/ggbrat/authors.html</loc></url>
 <url><loc>https://jorittmo.github.io/ggbrat/index.html</loc></url>
 <url><loc>https://jorittmo.github.io/ggbrat/reference/ashape_polygon_sf.html</loc></url>
+<url><loc>https://jorittmo.github.io/ggbrat/reference/atlas_size.html</loc></url>
 <url><loc>https://jorittmo.github.io/ggbrat/reference/auto_alpha.html</loc></url>
 <url><loc>https://jorittmo.github.io/ggbrat/reference/brain_views.html</loc></url>
 <url><loc>https://jorittmo.github.io/ggbrat/reference/build_atlas_surf.html</loc></url>
@@ -33,6 +34,7 @@
 <url><loc>https://jorittmo.github.io/ggbrat/reference/load_atlas.html</loc></url>
 <url><loc>https://jorittmo.github.io/ggbrat/reference/nifti_to_surface.html</loc></url>
 <url><loc>https://jorittmo.github.io/ggbrat/reference/remove_resource.html</loc></url>
+<url><loc>https://jorittmo.github.io/ggbrat/reference/reposition_atlas.html</loc></url>
 <url><loc>https://jorittmo.github.io/ggbrat/reference/resource_catalog.html</loc></url>
 <url><loc>https://jorittmo.github.io/ggbrat/reference/resource_info.html</loc></url>
 <url><loc>https://jorittmo.github.io/ggbrat/reference/shift_brain_views.html</loc></url>
