@@ -1,0 +1,14 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  articles/building-surface-atlases: building-surface-atlases.html
+  articles/building-svg-atlases: building-svg-atlases.html
+  articles/building-volume-atlases: building-volume-atlases.html
+  articles/plotting-atlases: plotting-atlases.html
+  articles/resources-and-caching: resources-and-caching.html
+  articles/templateflow: templateflow.html
+last_built: 2026-07-23T10:44Z
+urls:
+  reference: https://jorittmo.github.io/ggbrat/reference
+  article: https://jorittmo.github.io/ggbrat/articles
