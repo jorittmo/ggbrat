@@ -40,6 +40,8 @@ reference:
   - brain_views
   - capture_brain_view_presets
   - shift_brain_views
+  - reposition_atlas
+  - atlas_size
   - compact_subcortical_layout
   - shrink_polygons
   - smooth_polygons
