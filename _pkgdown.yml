@@ -1,0 +1,76 @@
+url: https://jorittmo.github.io/ggbrat/
+template:
+  bootstrap: 5
+  light-switch: true
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github, lightswitch]
+
+articles:
+- title: Using atlases
+  navbar: Using atlases
+  contents:
+  - matches("^articles/plotting-atlases$")
+  - matches("^articles/resources-and-caching$")
+
+- title: Building atlases
+  navbar: Building atlases
+  contents:
+  - matches("^articles/building-surface-atlases$")
+  - matches("^articles/building-volume-atlases$")
+  - matches("^articles/building-svg-atlases$")
+
+- title: Data sources
+  navbar: Data sources
+  contents:
+  - matches("^articles/templateflow$")
+
+reference:
+- title: Build atlases
+  contents:
+  - build_atlas_surf
+  - build_atlas_vol
+  - build_atlas_svg
+  - nifti_to_surface
+
+- title: Surface processing
+  contents:
+  - brain_views
+  - capture_brain_view_presets
+  - shift_brain_views
+  - compact_subcortical_layout
+  - shrink_polygons
+  - smooth_polygons
+
+- title: Resources
+  contents:
+  - resource_catalog
+  - list_resources
+  - resource_info
+  - get_resource
+  - download_atlas
+  - load_atlas
+  - download_annotation
+  - download_surface
+  - download_volume_atlas
+  - ggbrat_cache_dir
+  - remove_resource
+  - clear_resource_cache
+
+- title: TemplateFlow
+  contents:
+  - starts_with("templateflow_")
+
+- title: Lower-level helpers
+  contents:
+  - ashape_polygon_sf
+  - auto_alpha
+  - knn_density_filter
+  - silhouette_sf
+  - silhoutte_sf
+
+- title: Data
+  contents:
+  - grads
