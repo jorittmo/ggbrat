@@ -8,11 +8,11 @@ There is, of course, already the wonderful and popular
 purpose (and
 [`subcortex_visualization`](https://github.com/anniegbryant/subcortex_visualization)
 for subcortex), but ggbrat offers something slightly different. While
-`ggseg` provides prebuilt atlases and modified `geoms`, the focus of
-ggbrat is to provide tools for building the 2D atlases themselves
-(although it also comes with many prebuilt atlases). ggbrat builds
-two-dimensional brain atlases that work directly with
-[`ggplot2`](https://ggplot2.tidyverse.org/) and
+`ggseg` and `subcortex_visualization` provides prebuilt atlases and
+modified `geoms`, the focus of ggbrat is to provide tools for building
+the 2D atlases themselves (although it also comes with many prebuilt
+atlases). ggbrat builds two-dimensional brain atlases that work directly
+with [`ggplot2`](https://ggplot2.tidyverse.org/) and
 [`sf`](https://r-spatial.github.io/sf/). It can turn cortical
 annotations, labelled (subcortical) surface meshes, volumetric NIfTI
 atlases, and labelled SVG drawings into plot-ready `sf` geometry, from
@@ -153,26 +153,25 @@ ggbrat cache for next time.
 For more detail, head over to:
 
 - [Plotting ggbrat
-  atlases](https://jorittmo.github.io/ggbrat/articles/plotting-atlases.md)
+  atlases](https://jorittmo.github.io/ggbrat/articles/plotting-atlases.html)
 - [Resources and
-  caching](https://jorittmo.github.io/ggbrat/articles/resources-and-caching.md)
+  caching](https://jorittmo.github.io/ggbrat/articles/resources-and-caching.html)
 - [Building surface
-  atlases](https://jorittmo.github.io/ggbrat/articles/building-surface-atlases.md)
+  atlases](https://jorittmo.github.io/ggbrat/articles/building-surface-atlases.html)
 - [Building volumetric
-  atlases](https://jorittmo.github.io/ggbrat/articles/building-volume-atlases.md)
+  atlases](https://jorittmo.github.io/ggbrat/articles/building-volume-atlases.html)
 - [Building SVG
-  atlases](https://jorittmo.github.io/ggbrat/articles/building-svg-atlases.md)
+  atlases](https://jorittmo.github.io/ggbrat/articles/building-svg-atlases.html)
 - [Using
-  TemplateFlow](https://jorittmo.github.io/ggbrat/articles/templateflow.md)
+  TemplateFlow](https://jorittmo.github.io/ggbrat/articles/templateflow.html)
 - [Function
-  reference](https://jorittmo.github.io/ggbrat/reference/index.md)
+  reference](https://jorittmo.github.io/ggbrat/reference/index.html)
 
 Plotting premade atlases, downloading resources, and using the
 volumetric and SVG functionality require R only. Surface projection and
 NIfTI-to-mesh conversion additionally require Python 3.9 or newer. With
 `reticulate >= 1.41`, ggbrat declares the required Python packages when
-those functions are first used. I tried to make everything all R, but
-after having banged my head against the wall for far too long I gave up.
+those functions are first used.
 
 ## Acknowledgements
 
@@ -189,7 +188,10 @@ If you use any of them in your work, please cite the original sources.
 
 Available premade atlases can be found below. This will be updated as
 new atlases gets added, but I encourage you to crate your own 2D
-rendering instead!
+rendering instead! Some of the premade atlases (e.g. Brainstem_Navigator
+and SUIT) could use some more love in their creation (alternatively,
+just use
+[`subcortex_visualization`](https://github.com/anniegbryant/subcortex_visualization)).
 
 | Name | Source |
 |:---|:---|

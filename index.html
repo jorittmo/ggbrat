@@ -75,7 +75,7 @@
 <!-- badges: start -->
 
 <p>Do you use ggplot to visualize imaging data on brain atlases? Welcome to ggbrat: brain atlases for ggplot2!</p>
-<p>There is, of course, already the wonderful and popular <a href="https://ggseg.github.io/ggseg/" class="external-link"><code>ggseg</code></a> package for this particular purpose (and <a href="https://github.com/anniegbryant/subcortex_visualization" class="external-link"><code>subcortex_visualization</code></a> for subcortex), but ggbrat offers something slightly different. While <code>ggseg</code> provides prebuilt atlases and modified <code>geoms</code>, the focus of ggbrat is to provide tools for building the 2D atlases themselves (although it also comes with many prebuilt atlases). ggbrat builds two-dimensional brain atlases that work directly with <a href="https://ggplot2.tidyverse.org/" class="external-link"><code>ggplot2</code></a> and <a href="https://r-spatial.github.io/sf/" class="external-link"><code>sf</code></a>. It can turn cortical annotations, labelled (subcortical) surface meshes, volumetric NIfTI atlases, and labelled SVG drawings into plot-ready <code>sf</code> geometry, from whatever view angle you want. No more PNG snapshots and outlining; it is all automatic!</p>
+<p>There is, of course, already the wonderful and popular <a href="https://ggseg.github.io/ggseg/" class="external-link"><code>ggseg</code></a> package for this particular purpose (and <a href="https://github.com/anniegbryant/subcortex_visualization" class="external-link"><code>subcortex_visualization</code></a> for subcortex), but ggbrat offers something slightly different. While <code>ggseg</code> and <code>subcortex_visualization</code> provides prebuilt atlases and modified <code>geoms</code>, the focus of ggbrat is to provide tools for building the 2D atlases themselves (although it also comes with many prebuilt atlases). ggbrat builds two-dimensional brain atlases that work directly with <a href="https://ggplot2.tidyverse.org/" class="external-link"><code>ggplot2</code></a> and <a href="https://r-spatial.github.io/sf/" class="external-link"><code>sf</code></a>. It can turn cortical annotations, labelled (subcortical) surface meshes, volumetric NIfTI atlases, and labelled SVG drawings into plot-ready <code>sf</code> geometry, from whatever view angle you want. No more PNG snapshots and outlining; it is all automatic!</p>
 <p>The origin of this package stemmed from me wanting to visualize my brain data using ggplot with a bit more cortical texture (I mean the brain looks cool, no?). And since I really don’t like doing things manually, and because the brain is cool from many different angles, I developed an interactive view selector that can derive 3D looking 2D atlases from any camera angle in just a few seconds.</p>
 <p>Example surfaces/textures (plotted only using <code>ggplot</code>):</p>
 <p><img src="reference/figures/surface_strutctures.png"></p>
@@ -149,15 +149,15 @@
 <p><code><a href="reference/load_atlas.html">load_atlas()</a></code> downloads the atlas when necessary and keeps it in the user-specific ggbrat cache for next time.</p>
 <p>For more detail, head over to:</p>
 <ul>
-<li><a href="articles/plotting-atlases.html">Plotting ggbrat atlases</a></li>
-<li><a href="articles/resources-and-caching.html">Resources and caching</a></li>
-<li><a href="articles/building-surface-atlases.html">Building surface atlases</a></li>
-<li><a href="articles/building-volume-atlases.html">Building volumetric atlases</a></li>
-<li><a href="articles/building-svg-atlases.html">Building SVG atlases</a></li>
-<li><a href="articles/templateflow.html">Using TemplateFlow</a></li>
-<li><a href="reference/index.html">Function reference</a></li>
+<li><a href="https://jorittmo.github.io/ggbrat/articles/plotting-atlases.html">Plotting ggbrat atlases</a></li>
+<li><a href="https://jorittmo.github.io/ggbrat/articles/resources-and-caching.html">Resources and caching</a></li>
+<li><a href="https://jorittmo.github.io/ggbrat/articles/building-surface-atlases.html">Building surface atlases</a></li>
+<li><a href="https://jorittmo.github.io/ggbrat/articles/building-volume-atlases.html">Building volumetric atlases</a></li>
+<li><a href="https://jorittmo.github.io/ggbrat/articles/building-svg-atlases.html">Building SVG atlases</a></li>
+<li><a href="https://jorittmo.github.io/ggbrat/articles/templateflow.html">Using TemplateFlow</a></li>
+<li><a href="https://jorittmo.github.io/ggbrat/reference/index.html">Function reference</a></li>
 </ul>
-<p>Plotting premade atlases, downloading resources, and using the volumetric and SVG functionality require R only. Surface projection and NIfTI-to-mesh conversion additionally require Python 3.9 or newer. With <code>reticulate &gt;= 1.41</code>, ggbrat declares the required Python packages when those functions are first used. I tried to make everything all R, but after having banged my head against the wall for far too long I gave up.</p>
+<p>Plotting premade atlases, downloading resources, and using the volumetric and SVG functionality require R only. Surface projection and NIfTI-to-mesh conversion additionally require Python 3.9 or newer. With <code>reticulate &gt;= 1.41</code>, ggbrat declares the required Python packages when those functions are first used.</p>
 </div>
 <div class="section level2">
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
@@ -166,7 +166,7 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/list_resources.html">list_resources</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>If you use any of them in your work, please cite the original sources.</p>
-<p>Available premade atlases can be found below. This will be updated as new atlases gets added, but I encourage you to crate your own 2D rendering instead!</p>
+<p>Available premade atlases can be found below. This will be updated as new atlases gets added, but I encourage you to crate your own 2D rendering instead! Some of the premade atlases (e.g. Brainstem_Navigator and SUIT) could use some more love in their creation (alternatively, just use <a href="https://github.com/anniegbryant/subcortex_visualization" class="external-link"><code>subcortex_visualization</code></a>).</p>
 <table class="table">
 <colgroup>
 <col width="24%">
