@@ -99,9 +99,10 @@ resources:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_resources.html">list_resources</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/list_resources.html">list_resources</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"atlas"</span><span class="op">)</span></span></code></pre></div>
 <p>The returned <code>citation</code> column gives the recommended
-source citation for every resource. Derived forms of the same atlas—such
-as its annotation, mesh, and premade ggbrat RDS—share the citation of
-the atlas from which they were made.</p>
+source citation for every resource. The <code>aliases</code> column
+contains familiar alternative names. Derived forms of the same
+atlas—such as its annotation, mesh, and premade ggbrat RDS—share the
+citation of the atlas from which they were made.</p>
 <blockquote>
 <p>[!NOTE] Provenance and licensing metadata are still being audited for
 the resource catalog. Check the original source before redistributing a
@@ -111,6 +112,26 @@ resource.</p>
 particular item:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/resource_info.html">resource_info</a></span><span class="op">(</span><span class="st">"Melbourne_S1"</span><span class="op">)</span></span></code></pre></div>
+<p>Resource names can be abbreviated when the partial match is
+unambiguous:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/download_surface.html">download_surface</a></span><span class="op">(</span><span class="st">"inflated"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/resource_info.html">resource_info</a></span><span class="op">(</span><span class="st">"melbourne_s1"</span><span class="op">)</span></span></code></pre></div>
+<p>Common alternative names are also understood:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/load_atlas.html">load_atlas</a></span><span class="op">(</span><span class="st">"glasser"</span><span class="op">)</span>   <span class="co"># HCP-MMP1</span></span>
+<span><span class="fu"><a href="../reference/load_atlas.html">load_atlas</a></span><span class="op">(</span><span class="st">"dk"</span><span class="op">)</span>        <span class="co"># aparc / Desikan-Killiany</span></span>
+<span><span class="fu"><a href="../reference/load_atlas.html">load_atlas</a></span><span class="op">(</span><span class="st">"destrieux"</span><span class="op">)</span> <span class="co"># aparc.a2009s</span></span></code></pre></div>
+<p>Aliases are matched exactly before fuzzy partial matching. Very short
+aliases, such as <code>"dk"</code>, only participate in exact matching
+so that short searches do not produce a pile of accidental matches.</p>
+<p>When several resources match in an interactive R session, ggbrat
+displays a numbered menu:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/load_atlas.html">load_atlas</a></span><span class="op">(</span><span class="st">"yeo"</span><span class="op">)</span></span></code></pre></div>
+<p>In scripts, package checks, and CI, ambiguous matching stops and
+lists the candidates instead of waiting for input or silently choosing
+one.</p>
 </div>
 <div class="section level2">
 <h2 id="premade-atlases">Premade atlases<a class="anchor" aria-label="anchor" href="#premade-atlases"></a>
@@ -118,7 +139,7 @@ particular item:</p>
 <p><code><a href="../reference/download_atlas.html">download_atlas()</a></code> returns the path to a cached RDS file.
 <code><a href="../reference/load_atlas.html">load_atlas()</a></code> reads the atlas directly (and downloads if
 necessary):</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">atlas_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/download_atlas.html">download_atlas</a></span><span class="op">(</span><span class="st">"Yeo2011_7Networks_N1000"</span><span class="op">)</span></span>
 <span><span class="va">yeo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_atlas.html">load_atlas</a></span><span class="op">(</span><span class="st">"Yeo2011_7Networks_N1000"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -126,7 +147,7 @@ necessary):</p>
 <h2 id="builder-resources">Builder resources<a class="anchor" aria-label="anchor" href="#builder-resources"></a>
 </h2>
 <p>Different builder workflows need different source files:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">annotation</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/download_annotation.html">download_annotation</a></span><span class="op">(</span><span class="st">"aparc"</span><span class="op">)</span></span>
 <span><span class="va">cortical_surface</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/download_surface.html">download_surface</a></span><span class="op">(</span><span class="st">"fsaverage_inflated"</span><span class="op">)</span></span>
 <span><span class="va">subcortical_mesh</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/download_surface.html">download_surface</a></span><span class="op">(</span><span class="st">"Melbourne_S1"</span><span class="op">)</span></span>
@@ -136,7 +157,7 @@ necessary):</p>
 paths. A volume resource contains its NIfTI path or paths and, where
 available, a lookup table.</p>
 <p>Use <code>"all"</code> to download a complete category:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/download_annotation.html">download_annotation</a></span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/download_atlas.html">download_atlas</a></span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -144,20 +165,20 @@ available, a lookup table.</p>
 <h2 id="cache-location">Cache location<a class="anchor" aria-label="anchor" href="#cache-location"></a>
 </h2>
 <p>Inspect the cache location with:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ggbrat_cache_dir.html">ggbrat_cache_dir</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Set a different location before downloading:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>ggbrat.cache_dir <span class="op">=</span> <span class="st">"/path/to/another/cache"</span><span class="op">)</span></span></code></pre></div>
 <p>Individual resources can be removed with
 <code><a href="../reference/remove_resource.html">remove_resource()</a></code>. To remove the complete ggbrat resource
 cache, use <code><a href="../reference/clear_resource_cache.html">clear_resource_cache()</a></code>:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/remove_resource.html">remove_resource</a></span><span class="op">(</span><span class="st">"aparc"</span>, type <span class="op">=</span> <span class="st">"annotation"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/clear_resource_cache.html">clear_resource_cache</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>The prerelease catalog is mutable. If a resource has been replaced
 upstream, refresh the catalog and force a fresh download:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">atlas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_atlas.html">load_atlas</a></span><span class="op">(</span></span>
 <span>  <span class="st">"Schaefer2018_1000Parcels_7Networks_order"</span>,</span>
 <span>  refresh <span class="op">=</span> <span class="cn">TRUE</span>,</span>

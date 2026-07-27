@@ -12,7 +12,11 @@ remove_resource(name, type = NULL, cache_dir = ggbrat_cache_dir())
 
 - name:
 
-  Resource name, id, vector of names, or `"all"`.
+  Resource name, id, alias, partial name, vector of names, or `"all"`.
+  Exact normalized names and ids take priority, followed by exact
+  aliases. A unique partial match is selected automatically; multiple
+  matches open a selection menu in interactive R and produce an
+  informative error otherwise.
 
 - type:
 

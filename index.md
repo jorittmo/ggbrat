@@ -22,9 +22,9 @@ all automatic!
 The origin of this package stemmed from me wanting to visualize my brain
 data using ggplot with a bit more cortical texture (I mean the brain
 looks cool, no?). And since I really don’t like doing things manually,
-and because the brain is cool from many different angles, I developed an
-interactive view selector that can derive 3D looking 2D atlases from any
-camera angle in just a few seconds.
+and because the brain is cool from many different angles, I needed a way
+to be able to derive ggplot compatible atlases from any camera angle
+quickly.
 
 Example surfaces/textures (plotted only using `ggplot`):
 
@@ -101,7 +101,7 @@ To get the “3D look,” ggbrat can retain a density-sampled fraction of
 the original mesh vertices and plot them as an additional shade layer.
 That shade, overlays from other atlases, and even animations are still
 ordinary ggplot layers. See [Plotting ggbrat
-atlases](https://jorittmo.github.io/ggbrat/articles/plotting-atlases.md)
+atlases](https://jorittmo.github.io/ggbrat/articles/plotting-atlases.html)
 for the full examples.
 
 So, the package separates atlas creation from atlas use. Any `ggbrat`

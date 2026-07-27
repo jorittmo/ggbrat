@@ -73,7 +73,11 @@
 
 
 <dl><dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>Resource name, id, vector of names, or <code>"all"</code>.</p></dd>
+<dd><p>Resource name, id, alias, partial name, vector of names, or
+<code>"all"</code>. Exact normalized names and ids take priority, followed by exact
+aliases. A unique partial match is selected automatically; multiple
+matches open a selection menu in interactive R and produce an informative
+error otherwise.</p></dd>
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>

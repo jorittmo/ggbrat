@@ -22,5 +22,5 @@ resource_catalog(refresh = FALSE, quiet = FALSE)
 ## Value
 
 A data frame containing one row per resource, including its recommended
-source `citation`. The associated file table is stored in the `files`
-attribute.
+source `citation` and semicolon-separated `aliases`. The associated file
+table is stored in the `files` attribute.

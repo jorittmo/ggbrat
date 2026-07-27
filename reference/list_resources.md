@@ -36,4 +36,5 @@ list_resources(
 ## Value
 
 A resource catalog data frame. The `citation` column gives the
-recommended source citation for each resource.
+recommended source citation and `aliases` gives semicolon-separated
+alternative names for each resource.
