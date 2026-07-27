@@ -1,4 +1,4 @@
-# ggbrat: Brain Atlases for ggplot2!
+# ggbrat: Brain Atlases for ggplot2
 
 Do you use ggplot to visualize imaging data on brain atlases? Welcome to
 ggbrat: brain atlases for ggplot2!
