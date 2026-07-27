@@ -1,4 +1,4 @@
-# ggbrat: Brain Atlases for ggplot2!
+# ggbrat: Brain Atlases for ggplot2
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/jorittmo/ggbrat/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jorittmo/ggbrat/actions/workflows/R-CMD-check.yaml)
@@ -9,7 +9,8 @@ Do you use ggplot to visualize imaging data on brain atlases? Welcome to ggbrat:
 There is, of course, already the wonderful and popular [`ggseg`](https://ggseg.github.io/ggseg/) package for this particular purpose (and [`subcortex_visualization`](https://github.com/anniegbryant/subcortex_visualization) for subcortex), but ggbrat offers something slightly different. While `ggseg` and `subcortex_visualization` provides prebuilt atlases and modified `geoms`, the focus of ggbrat is to provide tools for building the 2D atlases themselves (although it also comes with many prebuilt atlases). ggbrat builds two-dimensional brain atlases that work directly with [`ggplot2`](https://ggplot2.tidyverse.org/) and [`sf`](https://r-spatial.github.io/sf/). It can turn cortical annotations, labelled (subcortical) surface meshes, volumetric NIfTI atlases, and labelled SVG drawings into plot-ready `sf` geometry, from whatever view angle you want. No more PNG snapshots and outlining; it is all automatic!
 
 The origin of this package stemmed from me wanting to visualize my brain data using ggplot with a bit more cortical texture (I mean the brain looks cool, no?).
-And since I really don't like doing things manually, and because the brain is cool from many different angles, I developed an interactive view selector that can derive 3D looking 2D atlases from any camera angle in just a few seconds.
+And since I really don't like doing things manually, and because the brain is cool from many different angles, I needed a way to be able to derive ggplot compatible
+atlases from any camera angle quickly.
 
 Example surfaces/textures (plotted only using `ggplot`):
 
@@ -61,7 +62,7 @@ Have you drawn your own atlas in Inkscape, or some other vector-based illustrati
 
 This package is about versatility, but within the limits of ggplot. As brain imagers favoring R (or perhaps ggplot), this is a tradeoff we have to deal with. Since ggplot is inherently a two-dimensional plotting library, and the brain is a three-dimensional object, ggplot will never be able to compete with proper 3D rendering software in terms of getting that sexy 3D look. However, what we lose in sexiness we gain in analytical versatility. As most of you know, ggplot is extremely versatile, especially with the numerous extensions built around it, making data exploration very easy compared to many other libraries. This was the reason that I did not want to wrap functionality around functions already handled by ggplot (and sf). All utilities and functionality that support `geom_sf()` can be used with `ggbrat`'s atlases.
 
-To get the "3D look," ggbrat can retain a density-sampled fraction of the original mesh vertices and plot them as an additional shade layer. That shade, overlays from other atlases, and even animations are still ordinary ggplot layers. See [Plotting ggbrat atlases](articles/plotting-atlases.html) for the full examples.
+To get the "3D look," ggbrat can retain a density-sampled fraction of the original mesh vertices and plot them as an additional shade layer. That shade, overlays from other atlases, and even animations are still ordinary ggplot layers. See [Plotting ggbrat atlases](https://jorittmo.github.io/ggbrat/articles/plotting-atlases.html) for the full examples.
 
 So, the package separates atlas creation from atlas use. Any `ggbrat` atlas is just a Simple Features object/collection like any other. While creating these atlases (at least the surface-based ones) requires Python and specifically `vtk` (trust me, I tried to do everything in R, but sometimes R just says "no"), once an atlas has been built and saved as an RDS file, plotting and sharing it are ordinary R workflows and do not require Python and frankly do not even require this package anymore. You just load the atlas up, join it with your data, and plot it (it does require `sf` though).
 
