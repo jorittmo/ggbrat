@@ -60,7 +60,7 @@
 #'
 #' @examples
 #' data(mtl_t1)
-#' plot(mtl_t1["region"])
+#' plot(sf::st_geometry(mtl_t1))
 #'
 #' @keywords datasets
 "mtl_t1"
@@ -91,7 +91,7 @@
 #'
 #' @examples
 #' data(mtl_t2)
-#' plot(mtl_t2["region"])
+#' plot(sf::st_geometry(mtl_t2))
 #'
 #' @keywords datasets
 "mtl_t2"

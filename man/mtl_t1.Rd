@@ -35,7 +35,7 @@ neuroimaging atlas. It was created from a labelled SVG drawing with
 }
 \examples{
 data(mtl_t1)
-plot(mtl_t1["region"])
+plot(sf::st_geometry(mtl_t1))
 
 }
 \keyword{datasets}
