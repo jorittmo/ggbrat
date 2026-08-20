@@ -320,6 +320,11 @@ just use
 
 - [`grads`](https://jorittmo.github.io/ggbrat/reference/grads.md) : Five
   cortical connectivity gradients for the Schaefer 1000 atlas
+- [`mtl_t1`](https://jorittmo.github.io/ggbrat/reference/mtl_t1.md) :
+  Medial temporal lobe atlas for T1-weighted anatomy drawn by Anika
+  Wuestefeld
+- [`mtl_t2`](https://jorittmo.github.io/ggbrat/reference/mtl_t2.md) :
+  Medial temporal lobe atlas for T2-weighted anatomy Anika Wuestefeld
 
 # Articles
 
