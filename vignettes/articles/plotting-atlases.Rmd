@@ -199,3 +199,21 @@ animation <- atlas_point$atlas |>
 ```
 
 ![](figures/point_gif.gif)
+
+## Plotting an svg based atlas
+
+When building an atlas from an SVG drawing the resulting object will look a bit different from
+surface based atlases. The result will be a single feature collection with the regions you have defined in the drawing.
+
+There are two svg atlases of the MTL lobe included in the package (drawn by Anika Wuestefeld) and these can be
+plotted like so:
+
+```{r}
+mtl_t2 |>
+  ggplot() +
+  geom_sf(aes(fill = region), linewidth = 1) +
+  labs(fill = "") +
+  theme_void()
+```
+
+![](figures/mtl_t2.png)
