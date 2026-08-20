@@ -42,10 +42,6 @@ neuroimaging atlas. It was created from a labelled SVG drawing with
 
 ``` r
 data(mtl_t2)
-plot(mtl_t2["region"])
-#> Warning: NAs introduced by coercion
-#> Warning: no non-missing arguments to min; returning Inf
-#> Warning: no non-missing arguments to max; returning -Inf
+plot(sf::st_geometry(mtl_t2))
 
-#> Error in plot.window(...): need finite 'ylim' values
 ```
