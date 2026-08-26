@@ -157,7 +157,7 @@
 <li><a href="https://jorittmo.github.io/ggbrat/articles/templateflow.html">Using TemplateFlow</a></li>
 <li><a href="https://jorittmo.github.io/ggbrat/reference/index.html">Function reference</a></li>
 </ul>
-<p>Plotting premade atlases, downloading resources, and using the volumetric and SVG functionality require R only. Surface projection and NIfTI-to-mesh conversion additionally require Python 3.9 or newer. With <code>reticulate &gt;= 1.41</code>, ggbrat declares the required Python packages when those functions are first used.</p>
+<p>Plotting premade atlases, downloading resources, and using the volumetric and SVG functionality require R only. Surface projection, NIfTI-to-mesh conversion, and TemplateFlow additionally require Python 3.9 or newer. On first use, ggbrat asks before allowing <code>reticulate</code> to download and install the required Python packages. Non-interactive scripts can opt in explicitly with <code>options(ggbrat.python_install = TRUE)</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>

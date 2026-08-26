@@ -168,10 +168,12 @@ For more detail, head over to:
   reference](https://jorittmo.github.io/ggbrat/reference/index.html)
 
 Plotting premade atlases, downloading resources, and using the
-volumetric and SVG functionality require R only. Surface projection and
-NIfTI-to-mesh conversion additionally require Python 3.9 or newer. With
-`reticulate >= 1.41`, ggbrat declares the required Python packages when
-those functions are first used.
+volumetric and SVG functionality require R only. Surface projection,
+NIfTI-to-mesh conversion, and TemplateFlow additionally require Python
+3.9 or newer. On first use, ggbrat asks before allowing `reticulate` to
+download and install the required Python packages. Non-interactive
+scripts can opt in explicitly with
+`options(ggbrat.python_install = TRUE)`.
 
 ## Acknowledgements
 
