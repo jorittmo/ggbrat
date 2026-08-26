@@ -94,10 +94,10 @@ functionality that support
 [`geom_sf()`](https://ggplot2.tidyverse.org/reference/ggsf.html) can be
 used with `ggbrat`’s atlases.
 
-To get the “3D look,” ggbrat can retain a density-sampled fraction of
-the original mesh vertices and plot them as an additional shade layer.
-That shade, overlays from other atlases, and even animations are still
-ordinary ggplot layers. See [Plotting ggbrat
+To get the “3D look” for surface atlases, ggbrat can retain a
+density-sampled fraction of the original mesh vertices and plot them as
+an additional shade layer. That shade, overlays from other atlases, and
+even animations are still ordinary ggplot layers. See [Plotting ggbrat
 atlases](https://jorittmo.github.io/ggbrat/articles/plotting-atlases.html)
 for the full examples.
 
@@ -171,6 +171,26 @@ NIfTI-to-mesh conversion, and TemplateFlow additionally require Python
 download and install the required Python packages. Non-interactive
 scripts can opt in explicitly with
 `options(ggbrat.python_install = TRUE)`.
+
+## Contributing
+
+ggbrat is still under active development and has not yet had a formal
+release. Testing, bug reports, documentation improvements, and code
+contributions are all very welcome.
+
+Contributions of new atlases or better built atlases than the ones I
+quickly and automatically threw together is very welcome! Atlas
+contributions should preferably document potential original source,
+citation, license, input files etc
+
+If you would like an atlas to be available through
+[`download_atlas()`](https://jorittmo.github.io/ggbrat/reference/download_atlas.md)
+and
+[`load_atlas()`](https://jorittmo.github.io/ggbrat/reference/load_atlas.md),
+please open an issue or pull request that includes the finished RDS file
+or a reproducible build script and provenance and licensing metadata.
+The atlas can then be packaged as a downloadable resource and added to
+`inst/extdata/resources.csv` and `inst/extdata/resource-files.csv`.
 
 ## Acknowledgements
 
