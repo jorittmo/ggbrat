@@ -208,7 +208,6 @@ brain_views <- function(
     subset_camera_positions = using_default_camera_positions
   )
 
-  brain2d_load_python()
   generic_mesh <- !is.null(mesh_path)
   paired_mesh <- generic_mesh && length(mesh_path) == 2L
   if (generic_mesh) {
@@ -226,18 +225,6 @@ brain_views <- function(
   } else {
     if (is.null(annot_path)) {
       stop("Supply either `annot_path` or `mesh_path`.", call. = FALSE)
-    }
-    surface_paths <- if (is.null(surface_path)) {
-      brain2d_surface_paths(
-        surf_dir = surf_dir,
-        surface = surface,
-        surf_blend_ratio = surf_blend_ratio
-      )
-    } else {
-      brain2d_resolve_explicit_surfaces(
-        brain2d_validate_paired_paths(surface_path, "surface_path", hemi),
-        surf_blend_ratio
-      )
     }
   }
   if (add_cortex && !paired_mesh) {
@@ -270,6 +257,22 @@ brain_views <- function(
       is.na(cortex_preview_opacity) || cortex_preview_opacity <= 0 ||
       cortex_preview_opacity > 1) {
     stop("`cortex_preview_opacity` must be one number in (0, 1].", call. = FALSE)
+  }
+
+  brain2d_load_python()
+  if (!generic_mesh) {
+    surface_paths <- if (is.null(surface_path)) {
+      brain2d_surface_paths(
+        surf_dir = surf_dir,
+        surface = surface,
+        surf_blend_ratio = surf_blend_ratio
+      )
+    } else {
+      brain2d_resolve_explicit_surfaces(
+        brain2d_validate_paired_paths(surface_path, "surface_path", hemi),
+        surf_blend_ratio
+      )
+    }
   }
   if (add_cortex) {
     cortex_paths <- if (is.null(cortex_surface_path)) {
@@ -897,9 +900,10 @@ brain2d_python_path <- function() {
 
 brain2d_load_python <- function() {
   if (!exists("extract_visible_2d", envir = brain2d_python_env, inherits = FALSE)) {
-    if (utils::packageVersion("reticulate") >= "1.41.0") {
-      reticulate::py_require(c("nibabel", "numpy", "pandas", "pyvista", "vtk"))
-    }
+    ggbrat_python_require(
+      c("nibabel", "numpy", "pandas", "pyvista", "vtk"),
+      "Surface atlas construction"
+    )
     reticulate::source_python(
       brain2d_python_path(),
       envir = brain2d_python_env

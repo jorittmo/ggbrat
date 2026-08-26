@@ -1,5 +1,7 @@
 test_that("GIFTI surfaces and label tables use the cortical reader", {
   skip_if_not_installed("reticulate")
+  old_options <- options(ggbrat.python_install = TRUE)
+  on.exit(options(old_options), add = TRUE)
   ggbrat:::brain2d_load_python()
   surface_path <- tempfile(fileext = ".surf.gii")
   second_surface_path <- tempfile(fileext = ".surf.gii")

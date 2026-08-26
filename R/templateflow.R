@@ -17,9 +17,7 @@ templateflow_load_python <- function() {
     stop("TemplateFlow support requires the R package `reticulate`.", call. = FALSE)
   }
   if (!exists("tf_get", envir = templateflow_python_env, inherits = FALSE)) {
-    if (utils::packageVersion("reticulate") >= "1.41.0") {
-      reticulate::py_require("templateflow")
-    }
+    ggbrat_python_require("templateflow", "TemplateFlow support")
     tryCatch(
       reticulate::source_python(
         templateflow_python_path(), envir = templateflow_python_env
@@ -27,8 +25,9 @@ templateflow_load_python <- function() {
       error = function(error) {
         stop(
           "Could not initialize the optional TemplateFlow Python client. ",
-          "With reticulate >= 1.41 it is provisioned automatically; otherwise ",
-          "install it with `python -m pip install templateflow`.\n",
+          "Install it with `python -m pip install templateflow`, or allow ",
+          "reticulate to provision it with ",
+          "`options(ggbrat.python_install = TRUE)`.\n",
           conditionMessage(error),
           call. = FALSE
         )

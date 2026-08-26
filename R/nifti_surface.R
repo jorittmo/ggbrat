@@ -303,11 +303,10 @@ nifti_surface_python_path <- function() {
 
 nifti_surface_load_python <- function() {
   if (!exists("nifti_to_surface", envir = nifti_surface_python_env, inherits = FALSE)) {
-    if (utils::packageVersion("reticulate") >= "1.41.0") {
-      reticulate::py_require(c(
-        "nibabel", "numpy", "scipy", "scikit-image", "vtk"
-      ))
-    }
+    ggbrat_python_require(
+      c("nibabel", "numpy", "scipy", "scikit-image", "vtk"),
+      "NIfTI-to-surface conversion"
+    )
     reticulate::source_python(
       nifti_surface_python_path(),
       envir = nifti_surface_python_env

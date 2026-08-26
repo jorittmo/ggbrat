@@ -21,8 +21,13 @@ from each selected camera, projects them into two dimensions, and returns
 region polygons together with optional silhouettes, shading points, and a
 cortical glass-brain layer (which is useful if you derive subcortical structures).
 
-Surface projection requires Python. `ggbrat` declares the needed Python packages
-through `reticulate` when the workflow is first used.
+Surface projection requires Python. When the workflow is first used, `ggbrat`
+asks before allowing `reticulate` to download and install the needed packages.
+For a non-interactive script, opt in explicitly before building the atlas:
+
+```{r}
+options(ggbrat.python_install = TRUE)
+```
 
 ## A cortical atlas
 
