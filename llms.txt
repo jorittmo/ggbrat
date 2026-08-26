@@ -73,7 +73,7 @@ illustration software that we don’t mention by name? No problem! If
 you’ve set up your drawing properly, you can just import it as a
 ready-to-go atlas file with the click of a button.
 
-![](figures/mtl_t2.png)
+![](articles/articles/figures/mtl_t2.png)
 
 (courtesy of Anika Wuestefeld)
 
