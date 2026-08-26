@@ -62,7 +62,7 @@ Have you drawn your own atlas in Inkscape, or some other vector-based illustrati
 
 This package is about versatility, but within the limits of ggplot. As brain imagers favoring R (or perhaps ggplot), this is a tradeoff we have to deal with. Since ggplot is inherently a two-dimensional plotting library, and the brain is a three-dimensional object, ggplot will never be able to compete with proper 3D rendering software in terms of getting that sexy 3D look. However, what we lose in sexiness we gain in analytical versatility. As most of you know, ggplot is extremely versatile, especially with the numerous extensions built around it, making data exploration very easy compared to many other libraries. This was the reason that I did not want to wrap functionality around functions already handled by ggplot (and sf). All utilities and functionality that support `geom_sf()` can be used with `ggbrat`'s atlases.
 
-To get the "3D look," ggbrat can retain a density-sampled fraction of the original mesh vertices and plot them as an additional shade layer. That shade, overlays from other atlases, and even animations are still ordinary ggplot layers. See [Plotting ggbrat atlases](https://jorittmo.github.io/ggbrat/articles/plotting-atlases.html) for the full examples.
+To get the "3D look" for surface atlases, ggbrat can retain a density-sampled fraction of the original mesh vertices and plot them as an additional shade layer. That shade, overlays from other atlases, and even animations are still ordinary ggplot layers. See [Plotting ggbrat atlases](https://jorittmo.github.io/ggbrat/articles/plotting-atlases.html) for the full examples.
 
 So, the package separates atlas creation from atlas use. Any `ggbrat` atlas is just a Simple Features object/collection like any other. While creating these atlases (at least the surface-based ones) requires Python and specifically `vtk` (trust me, I tried to do everything in R, but sometimes R just says "no"), once an atlas has been built and saved as an RDS file, plotting and sharing it are ordinary R workflows and do not require Python and frankly do not even require this package anymore. You just load the atlas up, join it with your data, and plot it (it does require `sf` though).
 
@@ -109,6 +109,22 @@ For more detail, head over to:
 - [Function reference](https://jorittmo.github.io/ggbrat/reference/index.html)
 
 Plotting premade atlases, downloading resources, and using the volumetric and SVG functionality require R only. Surface projection, NIfTI-to-mesh conversion, and TemplateFlow additionally require Python 3.9 or newer. On first use, ggbrat asks before allowing `reticulate` to download and install the required Python packages. Non-interactive scripts can opt in explicitly with `options(ggbrat.python_install = TRUE)`.
+
+## Contributing
+
+ggbrat is still under active development and has not yet had a formal release.
+Testing, bug reports, documentation improvements, and code contributions are all
+very welcome.
+
+Contributions of new atlases or better built atlases than the ones I quickly and 
+automatically threw together is very welcome! Atlas contributions should 
+preferably document potential original source, citation, license, input files etc
+
+If you would like an atlas to be available through `download_atlas()` and
+`load_atlas()`, please open an issue or pull request that includes the finished
+RDS file or a reproducible build script and provenance and licensing
+metadata. The atlas can then be packaged as a downloadable resource and added to `inst/extdata/resources.csv` and
+`inst/extdata/resource-files.csv`.
 
 ## Acknowledgements 
 
