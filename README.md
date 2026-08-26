@@ -54,7 +54,7 @@ There are also presets for both the surface-based view selector and its volumetr
 
 Have you drawn your own atlas in Inkscape, or some other vector-based illustration software that we don't mention by name? No problem! If you've set up your drawing properly, you can just import it as a ready-to-go atlas file with the click of a button.
 
-![Medial temporal lobe atlas imported from an SVG drawing](man/figures/mtl_drawing.png)
+![](vignettes/articles/figures/mtl_t2.png)
 
 (courtesy of Anika Wuestefeld)
 
@@ -88,8 +88,8 @@ library(ggplot2)
 yeo <- load_atlas("Yeo2011_7Networks_N1000")
 
 ggplot(yeo$atlas) +
-  geom_sf(aes(fill = color), linewidth = 0.15) +
-  geom_sf(data = yeo$shade, size = 0.1, alpha = 0.1) +
+  geom_sf(aes(fill = color), linewidth = 0.5) +
+  geom_sf(data = yeo$shade, size = 0.01, alpha = 0.05) +
   scale_fill_identity() +
   theme_void() 
 
