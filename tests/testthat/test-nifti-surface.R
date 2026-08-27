@@ -38,8 +38,6 @@ test_that("nifti_to_surface validates density controls before loading Python", {
 })
 
 test_that("Python dependencies support NIfTI-to-surface conversion", {
-  old_options <- options(ggbrat.python_install = TRUE)
-  on.exit(options(old_options), add = TRUE)
   temporary <- tempfile("ggbrat-nifti-smoke-")
   dir.create(temporary)
   on.exit(unlink(temporary, recursive = TRUE), add = TRUE)

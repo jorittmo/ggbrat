@@ -108,7 +108,27 @@ For more detail, head over to:
 - [Using TemplateFlow](https://jorittmo.github.io/ggbrat/articles/templateflow.html)
 - [Function reference](https://jorittmo.github.io/ggbrat/reference/index.html)
 
-Plotting premade atlases, downloading resources, and using the volumetric and SVG functionality require R only. Surface projection, NIfTI-to-mesh conversion, and TemplateFlow additionally require Python 3.9 or newer. On first use, ggbrat asks before allowing `reticulate` to download and install the required Python packages. Non-interactive scripts can opt in explicitly with `options(ggbrat.python_install = TRUE)`.
+## Python dependencies
+
+Plotting premade atlases, downloading resources, and using the volumetric and
+SVG functionality require R only. The following workflows additionally require
+Python 3.9 or newer:
+
+- `build_atlas_surf()`, `brain_views()`, and
+  `capture_brain_view_presets()` use `nibabel`, `numpy`, `pandas`, `pyvista`,
+  and `vtk`.
+- `nifti_to_surface()` uses `nibabel`, `numpy`, `scipy`, `scikit-image`, and
+  `vtk`.
+- `templateflow_templates()`, `templateflow_get()`,
+  `templateflow_metadata()`, and `templateflow_citations()` use
+  `templateflow`.
+
+When one of these workflows first initializes Python, ggbrat displays an
+informational message. If the dependencies are not already available,
+`reticulate` may create or reuse an isolated managed environment and download
+them. This does not normally modify the system Python environment, but the first
+use can take several minutes, particularly for PyVista and VTK. An environment
+explicitly selected through `reticulate` continues to take precedence.
 
 ## Contributing
 

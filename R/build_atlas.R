@@ -25,6 +25,12 @@
 #'   `cortex_silhouette` glass-brain layers. `atlas` contains polygons when
 #'   `create_polygons = TRUE` and region multipoints otherwise.
 #'
+#' @details
+#' Surface projection requires Python together with `nibabel`, `numpy`,
+#' `pandas`, `pyvista`, and `vtk`. On first use, ggbrat reports that reticulate
+#' may provision an isolated managed environment if these dependencies are not
+#' already available.
+#'
 #' @examples
 #' \dontrun{
 #' melbourne_mesh <- download_surface("Melbourne_S1", type = "subcortical")

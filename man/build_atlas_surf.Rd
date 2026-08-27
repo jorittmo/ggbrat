@@ -174,6 +174,12 @@ This helper wraps the full atlas-building pipeline: visible vertex
 extraction, view shifting, region polygon creation, and shade geometry
 creation.
 }
+\details{
+Surface projection requires Python together with \code{nibabel}, \code{numpy},
+\code{pandas}, \code{pyvista}, and \code{vtk}. On first use, ggbrat reports that reticulate
+may provision an isolated managed environment if these dependencies are not
+already available.
+}
 \examples{
 \dontrun{
 melbourne_mesh <- download_surface("Melbourne_S1", type = "subcortical")

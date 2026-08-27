@@ -74,3 +74,9 @@ A named list of camera positions.
 \description{
 Capture camera presets for later atlas builds
 }
+\details{
+Capturing camera presets requires the same Python dependencies as
+\code{\link[=brain_views]{brain_views()}}. On first use, ggbrat reports that reticulate may provision
+an isolated managed environment if these dependencies are not already
+available.
+}

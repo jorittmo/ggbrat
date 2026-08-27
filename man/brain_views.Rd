@@ -150,3 +150,9 @@ camera positions for a custom view. After positioning the mesh, click the
 green \strong{Use this view} control or press \code{U} to save the camera and close the
 viewer.
 }
+\details{
+Surface projection requires Python together with \code{nibabel}, \code{numpy},
+\code{pandas}, \code{pyvista}, and \code{vtk}. On first use, ggbrat reports that reticulate
+may provision an isolated managed environment if these dependencies are not
+already available.
+}

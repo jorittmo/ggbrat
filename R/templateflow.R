@@ -25,9 +25,8 @@ templateflow_load_python <- function() {
       error = function(error) {
         stop(
           "Could not initialize the optional TemplateFlow Python client. ",
-          "Install it with `python -m pip install templateflow`, or allow ",
-          "reticulate to provision it with ",
-          "`options(ggbrat.python_install = TRUE)`.\n",
+          "Install it in the selected Python environment with ",
+          "`python -m pip install templateflow`.\n",
           conditionMessage(error),
           call. = FALSE
         )
@@ -46,7 +45,9 @@ templateflow_filters <- function(...) {
 #'
 #' Thin R wrappers around the official TemplateFlow Python client. Resources
 #' are downloaded lazily into TemplateFlow's cache and returned as local paths.
-#' These functions require Python only when called.
+#' These functions require Python and the Python package `templateflow` only
+#' when called. On first use, ggbrat reports that reticulate may provision an
+#' isolated managed environment if the dependency is not already available.
 #'
 #' @param template TemplateFlow template identifier, without the `tpl-` prefix.
 #' @param ... BIDS-like TemplateFlow query entities such as `atlas`, `hemi`,

@@ -120,6 +120,12 @@ Creates each nonzero atlas region independently using marching cubes, then
 combines the disconnected components in one VTP file. The numeric \code{label}
 and character \code{region} arrays are stored as both point and cell data.
 }
+\details{
+This function requires Python together with \code{nibabel}, \code{numpy}, \code{scipy},
+\code{scikit-image}, and \code{vtk}. On first use, ggbrat reports that reticulate may
+provision an isolated managed environment if these dependencies are not
+already available.
+}
 \examples{
 \dontrun{
 brainstem_files <- download_volume_atlas("Brainstem_Navigator")

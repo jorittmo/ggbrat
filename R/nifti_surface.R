@@ -59,6 +59,12 @@
 #' @return A list containing `output_file`, per-region mesh summaries, and total
 #'   vertex and face counts.
 #'
+#' @details
+#' This function requires Python together with `nibabel`, `numpy`, `scipy`,
+#' `scikit-image`, and `vtk`. On first use, ggbrat reports that reticulate may
+#' provision an isolated managed environment if these dependencies are not
+#' already available.
+#'
 #' @examples
 #' \dontrun{
 #' brainstem_files <- download_volume_atlas("Brainstem_Navigator")

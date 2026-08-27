@@ -137,6 +137,12 @@ brain2d_normalize_camera_positions <- function(camera_positions) {
 #'
 #' @return A list with `atlas`, optional `silhouette`, `camera_positions`, and,
 #'   when requested, `cortex` and `cortex_silhouette` glass-brain layers.
+#'
+#' @details
+#' Surface projection requires Python together with `nibabel`, `numpy`,
+#' `pandas`, `pyvista`, and `vtk`. On first use, ggbrat reports that reticulate
+#' may provision an isolated managed environment if these dependencies are not
+#' already available.
 #' @export
 brain_views <- function(
   annot_path = NULL,
@@ -514,6 +520,12 @@ brain_views <- function(
 #' @param preset_hemi Hemisphere used to capture camera positions.
 #'
 #' @return A named list of camera positions.
+#'
+#' @details
+#' Capturing camera presets requires the same Python dependencies as
+#' [brain_views()]. On first use, ggbrat reports that reticulate may provision
+#' an isolated managed environment if these dependencies are not already
+#' available.
 #' @export
 capture_brain_view_presets <- function(
   annot_path = NULL,

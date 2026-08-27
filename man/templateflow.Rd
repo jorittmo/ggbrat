@@ -32,5 +32,7 @@ functions return values supplied by TemplateFlow.
 \description{
 Thin R wrappers around the official TemplateFlow Python client. Resources
 are downloaded lazily into TemplateFlow's cache and returned as local paths.
-These functions require Python only when called.
+These functions require Python and the Python package \code{templateflow} only
+when called. On first use, ggbrat reports that reticulate may provision an
+isolated managed environment if the dependency is not already available.
 }
