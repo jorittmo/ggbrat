@@ -164,13 +164,33 @@ For more detail, head over to:
 - [Function
   reference](https://jorittmo.github.io/ggbrat/reference/index.html)
 
+## Python dependencies
+
 Plotting premade atlases, downloading resources, and using the
-volumetric and SVG functionality require R only. Surface projection,
-NIfTI-to-mesh conversion, and TemplateFlow additionally require Python
-3.9 or newer. On first use, ggbrat asks before allowing `reticulate` to
-download and install the required Python packages. Non-interactive
-scripts can opt in explicitly with
-`options(ggbrat.python_install = TRUE)`.
+volumetric and SVG functionality require R only. The following workflows
+additionally require Python 3.9 or newer:
+
+- [`build_atlas_surf()`](https://jorittmo.github.io/ggbrat/reference/build_atlas_surf.md),
+  [`brain_views()`](https://jorittmo.github.io/ggbrat/reference/brain_views.md),
+  and
+  [`capture_brain_view_presets()`](https://jorittmo.github.io/ggbrat/reference/capture_brain_view_presets.md)
+  use `nibabel`, `numpy`, `pandas`, `pyvista`, and `vtk`.
+- [`nifti_to_surface()`](https://jorittmo.github.io/ggbrat/reference/nifti_to_surface.md)
+  uses `nibabel`, `numpy`, `scipy`, `scikit-image`, and `vtk`.
+- [`templateflow_templates()`](https://jorittmo.github.io/ggbrat/reference/templateflow.md),
+  [`templateflow_get()`](https://jorittmo.github.io/ggbrat/reference/templateflow.md),
+  [`templateflow_metadata()`](https://jorittmo.github.io/ggbrat/reference/templateflow.md),
+  and
+  [`templateflow_citations()`](https://jorittmo.github.io/ggbrat/reference/templateflow.md)
+  use `templateflow`.
+
+When one of these workflows first initializes Python, ggbrat displays an
+informational message. If the dependencies are not already available,
+`reticulate` may create or reuse an isolated managed environment and
+download them. This does not normally modify the system Python
+environment, but the first use can take several minutes, particularly
+for PyVista and VTK. An environment explicitly selected through
+`reticulate` continues to take precedence.
 
 ## Contributing
 

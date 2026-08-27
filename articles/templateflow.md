@@ -9,9 +9,9 @@ ggbrat provides a thin R interface to the official TemplateFlow Python
 client. TemplateFlow resolves and caches source files; these can then be
 passed to
 [`build_atlas_surf()`](https://jorittmo.github.io/ggbrat/reference/build_atlas_surf.md)
-just like local FreeSurfer or GIFTI files. On first use, ggbrat asks
-before allowing `reticulate` to install the client. Non-interactive
-scripts must opt in with `options(ggbrat.python_install = TRUE)`.
+just like local FreeSurfer or GIFTI files. On first use, ggbrat reports
+that `reticulate` may create or reuse an isolated managed environment
+and download the `templateflow` Python package if needed.
 
 ## Inspect TemplateFlow
 

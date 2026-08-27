@@ -13,15 +13,12 @@ returns region polygons together with optional silhouettes, shading
 points, and a cortical glass-brain layer (which is useful if you derive
 subcortical structures).
 
-Surface projection requires Python. When the workflow is first used,
-`ggbrat` asks before allowing `reticulate` to download and install the
-needed packages. For a non-interactive script, opt in explicitly before
-building the atlas:
-
-``` r
-
-options(ggbrat.python_install = TRUE)
-```
+Surface projection requires the Python packages `nibabel`, `numpy`,
+`pandas`, `pyvista`, and `vtk`. On first use, ggbrat displays an
+informational message. If the packages are not already available,
+`reticulate` may create or reuse an isolated managed environment and
+download them. The first initialization can take several minutes,
+particularly while PyVista and VTK are being installed.
 
 ## A cortical atlas
 

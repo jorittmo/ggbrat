@@ -104,3 +104,10 @@ capture_brain_view_presets(
 ## Value
 
 A named list of camera positions.
+
+## Details
+
+Capturing camera presets requires the same Python dependencies as
+[`brain_views()`](https://jorittmo.github.io/ggbrat/reference/brain_views.md).
+On first use, ggbrat reports that reticulate may provision an isolated
+managed environment if these dependencies are not already available.

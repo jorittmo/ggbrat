@@ -170,6 +170,13 @@ nifti_to_surface(
 A list containing `output_file`, per-region mesh summaries, and total
 vertex and face counts.
 
+## Details
+
+This function requires Python together with `nibabel`, `numpy`, `scipy`,
+`scikit-image`, and `vtk`. On first use, ggbrat reports that reticulate
+may provision an isolated managed environment if these dependencies are
+not already available.
+
 ## Examples
 
 ``` r

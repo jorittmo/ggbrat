@@ -251,6 +251,13 @@ A list containing shifted atlas output in `atlas`, optional
 `cortex_silhouette` glass-brain layers. `atlas` contains polygons when
 `create_polygons = TRUE` and region multipoints otherwise.
 
+## Details
+
+Surface projection requires Python together with `nibabel`, `numpy`,
+`pandas`, `pyvista`, and `vtk`. On first use, ggbrat reports that
+reticulate may provision an isolated managed environment if these
+dependencies are not already available.
+
 ## Examples
 
 ``` r

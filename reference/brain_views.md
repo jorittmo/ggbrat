@@ -212,3 +212,10 @@ brain_views(
 
 A list with `atlas`, optional `silhouette`, `camera_positions`, and,
 when requested, `cortex` and `cortex_silhouette` glass-brain layers.
+
+## Details
+
+Surface projection requires Python together with `nibabel`, `numpy`,
+`pandas`, `pyvista`, and `vtk`. On first use, ggbrat reports that
+reticulate may provision an isolated managed environment if these
+dependencies are not already available.

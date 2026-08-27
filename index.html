@@ -155,7 +155,20 @@
 <li><a href="https://jorittmo.github.io/ggbrat/articles/templateflow.html">Using TemplateFlow</a></li>
 <li><a href="https://jorittmo.github.io/ggbrat/reference/index.html">Function reference</a></li>
 </ul>
-<p>Plotting premade atlases, downloading resources, and using the volumetric and SVG functionality require R only. Surface projection, NIfTI-to-mesh conversion, and TemplateFlow additionally require Python 3.9 or newer. On first use, ggbrat asks before allowing <code>reticulate</code> to download and install the required Python packages. Non-interactive scripts can opt in explicitly with <code>options(ggbrat.python_install = TRUE)</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="python-dependencies">Python dependencies<a class="anchor" aria-label="anchor" href="#python-dependencies"></a>
+</h2>
+<p>Plotting premade atlases, downloading resources, and using the volumetric and SVG functionality require R only. The following workflows additionally require Python 3.9 or newer:</p>
+<ul>
+<li>
+<code><a href="reference/build_atlas_surf.html">build_atlas_surf()</a></code>, <code><a href="reference/brain_views.html">brain_views()</a></code>, and <code><a href="reference/capture_brain_view_presets.html">capture_brain_view_presets()</a></code> use <code>nibabel</code>, <code>numpy</code>, <code>pandas</code>, <code>pyvista</code>, and <code>vtk</code>.</li>
+<li>
+<code><a href="reference/nifti_to_surface.html">nifti_to_surface()</a></code> uses <code>nibabel</code>, <code>numpy</code>, <code>scipy</code>, <code>scikit-image</code>, and <code>vtk</code>.</li>
+<li>
+<code><a href="reference/templateflow.html">templateflow_templates()</a></code>, <code><a href="reference/templateflow.html">templateflow_get()</a></code>, <code><a href="reference/templateflow.html">templateflow_metadata()</a></code>, and <code><a href="reference/templateflow.html">templateflow_citations()</a></code> use <code>templateflow</code>.</li>
+</ul>
+<p>When one of these workflows first initializes Python, ggbrat displays an informational message. If the dependencies are not already available, <code>reticulate</code> may create or reuse an isolated managed environment and download them. This does not normally modify the system Python environment, but the first use can take several minutes, particularly for PyVista and VTK. An environment explicitly selected through <code>reticulate</code> continues to take precedence.</p>
 </div>
 <div class="section level2">
 <h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>

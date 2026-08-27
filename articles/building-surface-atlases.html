@@ -92,17 +92,18 @@ builder. It finds the vertices visible from each selected camera,
 projects them into two dimensions, and returns region polygons together
 with optional silhouettes, shading points, and a cortical glass-brain
 layer (which is useful if you derive subcortical structures).</p>
-<p>Surface projection requires Python. When the workflow is first used,
-<code>ggbrat</code> asks before allowing <code>reticulate</code> to
-download and install the needed packages. For a non-interactive script,
-opt in explicitly before building the atlas:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>ggbrat.python_install <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>Surface projection requires the Python packages <code>nibabel</code>,
+<code>numpy</code>, <code>pandas</code>, <code>pyvista</code>, and
+<code>vtk</code>. On first use, ggbrat displays an informational
+message. If the packages are not already available,
+<code>reticulate</code> may create or reuse an isolated managed
+environment and download them. The first initialization can take several
+minutes, particularly while PyVista and VTK are being installed.</p>
 <div class="section level2">
 <h2 id="a-cortical-atlas">A cortical atlas<a class="anchor" aria-label="anchor" href="#a-cortical-atlas"></a>
 </h2>
 <p>Download an annotation and build two views:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">aparc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/download_annotation.html">download_annotation</a></span><span class="op">(</span><span class="st">"aparc"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">atlas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_atlas_surf.html">build_atlas_surf</a></span><span class="op">(</span></span>
@@ -116,7 +117,7 @@ opt in explicitly before building the atlas:</p>
 view</strong> (or press <code>U</code>) for each requested view. The
 returned camera positions can be reused to make later builds
 deterministic:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">atlas_again</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_atlas_surf.html">build_atlas_surf</a></span><span class="op">(</span></span>
 <span>  annot_path <span class="op">=</span> <span class="va">aparc</span>,</span>
 <span>  surface <span class="op">=</span> <span class="st">"inflated"</span>,</span>
@@ -133,7 +134,7 @@ presets.</p>
 <p>An inflated surface gives clean region separation, while a pial
 surface retains more anatomical structure. You can blend the two. See
 the image below for different blend ratios.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">atlas_blended</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_atlas_surf.html">build_atlas_surf</a></span><span class="op">(</span></span>
 <span>  annot_path <span class="op">=</span> <span class="va">aparc</span>,</span>
 <span>  surface <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"inflated"</span>, <span class="st">"pial"</span><span class="op">)</span>,</span>
@@ -154,7 +155,7 @@ project it. Here the main parameters will be
 <code>voxel_smoothing_sigma</code> as well as
 <code>smoothing_iterations</code> and <code>smoothing_factor</code> to
 get “good” looking meshes.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">melbourne</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/download_volume_atlas.html">download_volume_atlas</a></span><span class="op">(</span><span class="st">"Melbourne_S1"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">mesh</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/nifti_to_surface.html">nifti_to_surface</a></span><span class="op">(</span></span>
@@ -179,7 +180,7 @@ haven’t optimised the parameters for each and every one. So it might be
 worth doing it again if you want really good results. But if you are
 okay with my half assed meshes you can skip the conversion and build
 directly with that:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">aseg_mesh</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/download_surface.html">download_surface</a></span><span class="op">(</span><span class="st">"aseg_subcortex"</span>, type <span class="op">=</span> <span class="st">"subcortical"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">subcortex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_atlas_surf.html">build_atlas_surf</a></span><span class="op">(</span></span>
@@ -197,7 +198,7 @@ multipoints and silhoutte can be plotted as a “glass-brain” layer.</p>
 </h2>
 <p>Set <code>create_polygons = FALSE</code> when you want the projected
 region point clouds:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">points</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_atlas_surf.html">build_atlas_surf</a></span><span class="op">(</span></span>
 <span>  mesh_path <span class="op">=</span> <span class="va">melbourne_mesh</span>,</span>
 <span>  create_polygons <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -216,7 +217,7 @@ requested, X and Y form the polygons while multipoint layers such as
 <p>ggbrat expects the region identifier in a point-data array called
 <code>region</code>. For an imported VTP with a differently named array,
 tell the builder which one to use:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_atlas_surf.html">build_atlas_surf</a></span><span class="op">(</span></span>
 <span>  mesh_path <span class="op">=</span> <span class="st">"my_mesh.vtp"</span>,</span>
 <span>  region_array <span class="op">=</span> <span class="st">"Label"</span></span>
@@ -227,7 +228,7 @@ are generated automatically.</p>
 <div class="section level2">
 <h2 id="plot-the-result">Plot the result<a class="anchor" aria-label="anchor" href="#plot-the-result"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">subcortex</span><span class="op">$</span><span class="va">atlas</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">subcortex</span><span class="op">$</span><span class="va">cortex</span>, alpha <span class="op">=</span> <span class="fl">0.04</span>, size <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">subcortex</span><span class="op">$</span><span class="va">cortex_silhouette</span>, alpha <span class="op">=</span> <span class="fl">0.5</span>, size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
